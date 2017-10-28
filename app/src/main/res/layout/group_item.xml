@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/margin_sm">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_logo"
+            android:layout_width="@dimen/group_logo_width"
+            android:layout_height="@dimen/group_logo_height"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="1dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_sm"
+            android:layout_marginRight="@dimen/margin_sm"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/group_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/group_item_text_view_height"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                android:textStyle="bold"
+                tools:text="Group Name" />
+
+            <TextView
+                android:id="@+id/city_state_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/group_item_text_view_height"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                android:textStyle="italic"
+                tools:text="City, State" />
+
+            <TextView
+                android:id="@+id/created_by_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/group_item_text_view_height"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="Created By:" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray" />
+
+</LinearLayout>

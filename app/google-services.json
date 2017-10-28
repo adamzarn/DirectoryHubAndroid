@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "301967649981",
+    "firebase_url": "https://valleybrookcommunitychur-77604.firebaseio.com",
+    "project_id": "valleybrookcommunitychur-77604",
+    "storage_bucket": "valleybrookcommunitychur-77604.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301967649981:android:de7653e63cc599a8",
+        "android_client_info": {
+          "package_name": "com.ajz.directoryhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "301967649981-scu4a2q7e2knuh40a2242tcsuhd2hrn6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu_ty9lnt18IPsfoVdk4Racc_zgsUiXzc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

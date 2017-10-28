@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="edit_text_height">40dp</dimen>
+
+    <dimen name="margin_xs">8dp</dimen>
+    <dimen name="margin_sm">16dp</dimen>
+    <dimen name="margin_md">24dp</dimen>
+    <dimen name="margin_lg">32dp</dimen>
+    <dimen name="margin_xl">40dp</dimen>
+
+    <dimen name="button_width">100dp</dimen>
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="long_button_width">200dp</dimen>
+
+    <dimen name="font_xs">8sp</dimen>
+    <dimen name="font_sm">20sp</dimen>
+    <dimen name="font_md">24sp</dimen>
+    <dimen name="font_lg">32sp</dimen>
+    <dimen name="font_xl">40sp</dimen>
+
+    <dimen name="progress_bar_width">40dp</dimen>
+    <dimen name="progress_bar_height">40dp</dimen>
+
+    <dimen name="group_item_height">122dp</dimen>
+
+    <dimen name="group_logo_width">90dp</dimen>
+    <dimen name="group_logo_height">90dp</dimen>
+    <dimen name="group_item_text_view_height">30dp</dimen>
+
+</resources>

@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">DirectoryHub</string>
+    <string name="main_activity_title">Directory Hub</string>
+
+    <string name="email_placeholder">Email</string>
+    <string name="password_placeholder">Password</string>
+    <string name="first_name_placeholder">First Name</string>
+    <string name="last_name_placeholder">Last Name</string>
+    <string name="verify_password_placeholder">Verify Password</string>
+
+    <string name="login_button_text">LOGIN</string>
+    <string name="forgot_password_button_text">Forgot Password?</string>
+    <string name="create_account_button_text">Create Account</string>
+    <string name="submit_button_text">Submit</string>
+
+    <string name="entry_phone_header_text">Phone</string>
+    <string name="entry_email_header_text">Email</string>
+    <string name="entry_address_header_text">Address</string>
+    <string name="entry_contact_info_header_text">Contact Info</string>
+    <string name="entry_children_header_text">Children</string>
+
+    <string name="logout_menu_item_text">Logout</string>
+
+    <string name="by_name_text">By Name</string>
+    <string name="by_creator_text">By Creator</string>
+    <string name="by_unique_id">By Unique ID</string>
+
+    <string name="group_uid_label_text">UNIQUE ID: NOT YET ASSIGNED</string>
+    <string name="group_name_label_text">GROUP NAME</string>
+    <string name="city_label_text">CITY</string>
+    <string name="state_label_text">STATE</string>
+    <string name="password_label_text">PASSWORD</string>
+    <string name="group_logo_label_text">GROUP LOGO</string>
+    <string name="upload_photo_button_text">UPLOAD PHOTO</string>
+    <string name="remove_photo_button_text">REMOVE PHOTO</string>
+    <string name="manage_administrators_button_text">MANAGE ADMINISTRATORS</string>
+    <string name='submit_item_text'>SUBMIT</string>
+
+</resources>
