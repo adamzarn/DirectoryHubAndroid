@@ -1,17 +1,20 @@
 package com.ajz.directoryhub.adapters;
 
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.objects.Group;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,7 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
 
     private Boolean searching;
     private FirebaseStorage mStorage;
+    private FirebaseAuth mAuth;
     private ArrayList<Group> groups = new ArrayList<>();
     private ArrayList<Group> filteredGroups = new ArrayList<>();
 
@@ -43,23 +47,44 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         Group group;
         if (searching) {
             group = filteredGroups.get(position);
         } else {
             group = groups.get(position);
         }
+        if (!group.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
+            holder.editGroupButton.setVisibility(View.GONE);
+        } else {
+            holder.editGroupButton.setVisibility(View.VISIBLE);
+        }
         holder.groupNameTextView.setText(group.getName());
         holder.cityStateTextView.setText(group.getCity() + ", " + group.getState());
         String createdByString = "Created by: " + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
 
+        holder.editGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searching) {
+                    clickListener.onEditGroupClick(filteredGroups.get(position));
+                } else {
+                    clickListener.onEditGroupClick(groups.get(position));
+                }
+            }
+        });
+
+        if (position + 1 == getItemCount()) {
+            setBottomMargin(holder.itemView, (int) (80 * Resources.getSystem().getDisplayMetrics().density));
+        } else {
+            setBottomMargin(holder.itemView, 0);
+        }
+
+        holder.groupLogoImageView.setImageBitmap(null);
         mStorage.getReference().child(group.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                System.out.println(uri.toString());
-                System.out.println(uri.getPath());
                 Picasso.with(holder.groupLogoImageView.getContext()).load(uri.toString()).into(holder.groupLogoImageView);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -70,6 +95,14 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         });
 
 
+    }
+
+    public static void setBottomMargin(View view, int bottomMargin) {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomMargin);
+            view.requestLayout();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -86,10 +119,14 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         @BindView(R.id.created_by_text_view)
         TextView createdByTextView;
 
+        @BindView(R.id.edit_group_button)
+        Button editGroupButton;
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
             mStorage = FirebaseStorage.getInstance();
+            mAuth = FirebaseAuth.getInstance();
             view.setOnClickListener(this);
         }
 
@@ -105,6 +142,7 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
 
     public interface OnGroupClickListener {
         void onGroupClick(Group selectedGroup);
+        void onEditGroupClick(Group groupToEdit);
     }
 
     public void setOnGroupClickListener(final OnGroupClickListener groupClickListener) {

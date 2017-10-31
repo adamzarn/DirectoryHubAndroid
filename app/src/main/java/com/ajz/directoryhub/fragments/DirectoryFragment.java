@@ -3,6 +3,7 @@ package com.ajz.directoryhub.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
@@ -31,6 +33,12 @@ public class DirectoryFragment extends Fragment {
 
     @BindView(R.id.directory_search_view)
     SearchView directorySearchView;
+
+    @BindView(R.id.directory_progress_bar)
+    ProgressBar directoryProgressBar;
+
+    @BindView(R.id.add_entry_fab)
+    FloatingActionButton addEntryFab;
 
     public DirectoryFragment() {
     }
@@ -95,8 +103,13 @@ public class DirectoryFragment extends Fragment {
             }
         });
 
+        if (!getArguments().getBoolean("isAdmin")) {
+            addEntryFab.setVisibility(View.GONE);
+        }
+
+        directoryProgressBar.setVisibility(View.VISIBLE);
         FirebaseClient fb = new FirebaseClient();
-        fb.getDirectory(directoryAdapter, getArguments().getString("groupUid"));
+        fb.getDirectory(directoryAdapter, getArguments().getString("groupUid"), directoryProgressBar);
 
         return rootView;
 

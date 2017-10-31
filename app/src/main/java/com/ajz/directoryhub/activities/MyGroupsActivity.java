@@ -51,7 +51,20 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
         Class directory = DirectoryActivity.class;
         Intent directoryIntent = new Intent(getApplicationContext(), directory);
         directoryIntent.putExtra("groupUid", selectedGroup.getUid());
+        if (!selectedGroup.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
+            directoryIntent.putExtra("isAdmin", false);
+        } else {
+            directoryIntent.putExtra("isAdmin", true);
+        }
         startActivity(directoryIntent);
+    }
+
+    @Override
+    public void onGroupToEditSelected(Group groupToEdit) {
+        Class editGroup = CreateGroupActivity.class;
+        Intent editGroupIntent = new Intent(getApplicationContext(), editGroup);
+        editGroupIntent.putExtra("groupToEdit", groupToEdit);
+        startActivity(editGroupIntent);
     }
 
     @Override

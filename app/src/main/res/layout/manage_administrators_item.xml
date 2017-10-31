@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/member_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/font_sm"
+            android:layout_marginTop="@dimen/margin_sm"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:layout_marginLeft="@dimen/margin_lg"
+            android:layout_marginRight="@dimen/margin_lg"
+            tools:text="John Doe" />
+
+        <Button
+            android:id="@+id/edit_group_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/checkbox_off_background"
+            android:layout_marginTop="@dimen/margin_sm"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:layout_marginLeft="@dimen/margin_lg"
+            android:layout_marginRight="@dimen/margin_lg"/>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray" />
+
+</LinearLayout>

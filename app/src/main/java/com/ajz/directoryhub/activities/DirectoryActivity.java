@@ -48,6 +48,7 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         Intent entryIntent = new Intent(getApplicationContext(), entry);
         entryIntent.putExtra("groupUid", groupUid);
         entryIntent.putExtra("entryUid", selectedEntry.getUid());
+        entryIntent.putExtra("isAdmin", getIntent().getExtras().getBoolean("isAdmin"));
         startActivity(entryIntent);
     }
 

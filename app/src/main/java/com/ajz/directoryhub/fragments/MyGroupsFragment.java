@@ -61,6 +61,7 @@ public class MyGroupsFragment extends Fragment {
 
     public interface OnGroupClickListener {
         void onGroupSelected(Group selectedGroup);
+        void onGroupToEditSelected(Group groupToEdit);
     }
 
     public interface OnAddGroupFabClickListener {
@@ -100,6 +101,10 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void onGroupClick(Group selectedGroup) {
                 mCallback.onGroupSelected(selectedGroup);
+            }
+            @Override
+            public void onEditGroupClick(Group groupToEdit) {
+                mCallback.onGroupToEditSelected(groupToEdit);
             }
         });
 

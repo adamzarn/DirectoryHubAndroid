@@ -1,5 +1,9 @@
 package com.ajz.directoryhub.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +11,7 @@ import java.util.Map;
  * Created by adamzarn on 10/21/17.
  */
 
-public class Group {
+public class Group implements Parcelable {
 
     private String uid;
     private String name;
@@ -15,15 +19,15 @@ public class Group {
     private String city;
     private String state;
     private String password;
-    private Map<String, Object> admins;
-    private Map<String, Object> users;
+    private HashMap<String, Object> admins;
+    private HashMap<String, Object> users;
     private String createdBy;
     private String lowercasedCreatedBy;
     private String createdByUid;
 
     public Group(String uid, String name, String lowercasedName,
                       String city, String state, String password,
-                        Map<String, Object> admins, Map<String, Object> users, String createdBy,
+                        HashMap<String, Object> admins, HashMap<String, Object> users, String createdBy,
                       String lowercasedCreatedBy, String createdByUid) {
         this.uid = uid;
         this.name = name;
@@ -62,6 +66,18 @@ public class Group {
         return password;
     }
 
+    public HashMap<String, Object> getAdmins() {
+        return admins;
+    }
+
+    public HashMap<String, Object> getUsers() {
+        return users;
+    }
+
+    public ArrayList<String> getAdminKeys() {
+        return new ArrayList<String>(admins.keySet());
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> group = new HashMap<String, Object>();
         group.put("name", name);
@@ -76,5 +92,51 @@ public class Group {
         group.put("createdByUid", createdByUid);
         return group;
     }
+
+    public Group(Parcel parcel) {
+        this.uid = parcel.readString();
+        this.name = parcel.readString();
+        this.lowercasedName = parcel.readString();
+        this.city = parcel.readString();
+        this.state = parcel.readString();
+        this.password = parcel.readString();
+        this.admins = (HashMap<String, Object>) parcel.readSerializable();
+        this.users = (HashMap<String, Object>) parcel.readSerializable();
+        this.createdBy = parcel.readString();
+        this.lowercasedCreatedBy = parcel.readString();
+        this.createdByUid = parcel.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(uid);
+        parcel.writeString(name);
+        parcel.writeString(lowercasedName);
+        parcel.writeString(city);
+        parcel.writeString(state);
+        parcel.writeString(password);
+        parcel.writeSerializable(admins);
+        parcel.writeSerializable(users);
+        parcel.writeString(createdBy);
+        parcel.writeString(lowercasedCreatedBy);
+        parcel.writeString(createdByUid);
+    }
+
+    public static final Parcelable.Creator<Group> CREATOR
+            = new Parcelable.Creator<Group>() {
+
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
 
 }

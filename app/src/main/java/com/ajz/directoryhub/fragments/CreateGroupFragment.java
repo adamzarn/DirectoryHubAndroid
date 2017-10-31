@@ -3,7 +3,9 @@ package com.ajz.directoryhub.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -16,6 +18,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
+import com.ajz.directoryhub.objects.Group;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +39,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CreateGroupFragment extends Fragment {
 
     private ArrayList<String> groupUids;
+    private Group groupToEdit;
+    private FirebaseStorage mStorage;
     private byte[] currentImageData;
 
     @BindView(R.id.group_uid_text_view)
@@ -74,7 +83,6 @@ public class CreateGroupFragment extends Fragment {
 
     @OnClick(R.id.manage_administrators_button)
     public void manageAdministrators() {
-
     }
 
     @BindView(R.id.submit_create_group_button)
@@ -82,14 +90,17 @@ public class CreateGroupFragment extends Fragment {
 
     @OnClick(R.id.submit_create_group_button)
     public void submitCreateGroup() {
-        System.out.println("Submit Button Pressed");
         submitCreateGroupProgressBar.bringToFront();
         submitCreateGroupProgressBar.setVisibility(View.VISIBLE);
+        String groupUid = null;
+        if (groupToEdit != null) {
+            groupUid = groupToEdit.getUid();
+        }
         String groupName = groupNameEditText.getText().toString();
         String city = cityEditText.getText().toString();
         String state = stateEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        mCallback.onButtonClick(groupUids, groupName, city, state, password, currentImageData, submitCreateGroupProgressBar);
+        mCallback.onButtonClick(groupUid, groupUids, groupName, city, state, password, currentImageData, submitCreateGroupProgressBar);
     }
 
     @BindView(R.id.submit_create_group_progress_bar)
@@ -98,12 +109,14 @@ public class CreateGroupFragment extends Fragment {
     ClickListener mCallback;
 
     public interface ClickListener {
-        void onButtonClick(ArrayList<String> groupUids, String groupName, String city, String state, String password, byte[] groupLogo, ProgressBar pb);
+        void onButtonClick(String groupUid, ArrayList<String> groupUids, String groupName, String city, String state, String password, byte[] groupLogo, ProgressBar pb);
         void onFocusChange(View view);
         void pickImage();
+        void manageAdministratorsButtonClicked(Group groupBeingEdited);
     }
 
     public CreateGroupFragment() {
+        mStorage = FirebaseStorage.getInstance();
     }
 
     @Override
@@ -123,7 +136,43 @@ public class CreateGroupFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         currentImageData = new byte[0];
-        groupUids = getArguments().getStringArrayList("groupUids");
+
+        if (getArguments().getStringArrayList("groupUids") != null) {
+            groupUids = getArguments().getStringArrayList("groupUids");
+            submitCreateGroupButton.setText("SUBMIT");
+            manageAdministratorsButton.setVisibility(View.GONE);
+        }
+
+        if (getArguments().getParcelable("groupToEdit") != null) {
+            groupToEdit = getArguments().getParcelable("groupToEdit");
+
+            groupUidTextView.setText("UNIQUE ID: " + groupToEdit.getUid());
+            groupNameEditText.setText(groupToEdit.getName());
+            cityEditText.setText(groupToEdit.getCity());
+            stateEditText.setText(groupToEdit.getState());
+            passwordEditText.setText(groupToEdit.getPassword());
+
+            mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.with(createGroupLogo.getContext()).load(uri.toString()).into(createGroupLogo);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    createGroupLogo.setImageBitmap(null);
+                }
+            });
+
+            manageAdministratorsButton.setVisibility(View.VISIBLE);
+            manageAdministratorsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCallback.manageAdministratorsButtonClicked(groupToEdit);
+                }
+            });
+            submitCreateGroupButton.setText("SUBMIT CHANGES");
+        }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(
                 Arrays.asList(groupNameEditText, cityEditText, stateEditText, passwordEditText));

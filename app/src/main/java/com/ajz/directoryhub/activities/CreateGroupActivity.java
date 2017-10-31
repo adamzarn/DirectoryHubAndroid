@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by adamzarn on 10/27/17.
@@ -43,7 +42,11 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
 
         mAuth = FirebaseAuth.getInstance();
 
-        getSupportActionBar().setTitle("Create Group");
+        if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
+            getSupportActionBar().setTitle("Create Group");
+        } else {
+            getSupportActionBar().setTitle("Edit Group");
+        }
 
         createGroupFragment = new CreateGroupFragment();
         createGroupFragment.setArguments(getIntent().getExtras());
@@ -58,7 +61,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
     }
 
     @Override
-    public void onButtonClick(ArrayList<String> groupUids, String groupName, String city, String state, String password, byte[] groupLogo, ProgressBar pb) {
+    public void onButtonClick(String groupUid, ArrayList<String> groupUids, String groupName, String city, String state, String password, byte[] groupLogo, ProgressBar pb) {
 
         if (StringUtils.isMissing(groupName)) {
             DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing Group Name", "Please provide a group name.");
@@ -82,10 +85,10 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
 
         FirebaseUser user = mAuth.getCurrentUser();
 
-        Map<String, Object> admins = new HashMap<String, Object>();
+        HashMap<String, Object> admins = new HashMap<String, Object>();
         admins.put(user.getUid(), user.getDisplayName());
 
-        Group newGroup = new Group(null, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
+        Group newGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
                 user.getDisplayName().toLowerCase(), user.getUid());
         new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
 
@@ -106,6 +109,14 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void manageAdministratorsButtonClicked(Group groupBeingEdited) {
+        Class manageAdministrators = ManageAdministratorsActivity.class;
+        Intent intent = new Intent(getApplicationContext(), manageAdministrators);
+        intent.putExtra("groupBeingEdited", groupBeingEdited);
+        startActivity(intent);
     }
 
     @Override

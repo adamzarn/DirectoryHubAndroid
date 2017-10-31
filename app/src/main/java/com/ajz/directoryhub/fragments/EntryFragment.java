@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +101,14 @@ public class EntryFragment extends Fragment {
     @BindView(R.id.entry_children_header_text_view)
     TextView childrenHeaderTextView;
 
+    ///OTHER ELEMENTS///
+
+    @BindView(R.id.entry_progress_bar)
+    ProgressBar entryProgressBar;
+
+    @BindView(R.id.edit_entry_fab)
+    FloatingActionButton editEntryFab;
+
     public EntryFragment() {
     }
 
@@ -115,7 +125,13 @@ public class EntryFragment extends Fragment {
 
         FirebaseClient fb = new FirebaseClient();
         Bundle args = getArguments();
-        fb.getEntry(this, args.getString("groupUid"), args.getString("entryUid"));
+
+        if (!getArguments().getBoolean("isAdmin")) {
+            editEntryFab.setVisibility(View.GONE);
+        }
+
+        entryProgressBar.setVisibility(View.VISIBLE);
+        fb.getEntry(this, args.getString("groupUid"), args.getString("entryUid"), entryProgressBar);
 
         return rootView;
 

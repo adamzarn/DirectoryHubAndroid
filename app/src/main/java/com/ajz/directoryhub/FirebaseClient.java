@@ -33,6 +33,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -89,8 +90,10 @@ public class FirebaseClient {
             @Override
             public void onDataChange(DataSnapshot ds) {
 
-                Group receivedGroup = makeGroup(ds);
-                adapter.appendGroup(receivedGroup);
+                if (ds.exists()) {
+                    Group receivedGroup = makeGroup(ds);
+                    adapter.appendGroup(receivedGroup);
+                }
 
                 if (finished) {
                     pb.setVisibility(View.INVISIBLE);
@@ -132,12 +135,14 @@ public class FirebaseClient {
 
     }
 
-    public void getDirectory(final DirectoryAdapter adapter, String groupUid) {
+    public void getDirectory(final DirectoryAdapter adapter, String groupUid, final ProgressBar pb) {
 
         mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot ds) {
+
+                pb.setVisibility(View.GONE);
 
                 ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
 
@@ -158,12 +163,13 @@ public class FirebaseClient {
 
     }
 
-    public void getEntry(final EntryFragment fragment, String groupUid, String entryUid) {
+    public void getEntry(final EntryFragment fragment, String groupUid, String entryUid, final ProgressBar pb) {
 
         mDatabase.child("Directories").child(groupUid).child(entryUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot ds) {
+                pb.setVisibility(View.GONE);
                 Entry selectedEntry = makeEntry(ds);
                 fragment.populateFragment(selectedEntry);
             }
@@ -299,7 +305,9 @@ public class FirebaseClient {
     public Group makeGroup(DataSnapshot ds) {
 
         String uid = ds.getKey();
+        System.out.println(uid);
         String name = getValue(ds, "name");
+        System.out.println(name);
         String lowercasedName = getValue(ds, "lowercasedName");
         String city = getValue(ds, "city");
         String state = getValue(ds, "state");
@@ -307,15 +315,20 @@ public class FirebaseClient {
         String createdBy = getValue(ds, "createdBy");
         String lowercasedCreatedBy = getValue(ds, "lowercasedCreatedBy");
         String createdByUid = getValue(ds, "createdByUid");
-        Map<String, Object> admins = (Map<String, Object>) ds.child("admins").getValue();
-        Map<String, Object> users = (Map<String, Object>) ds.child("users").getValue();
+        HashMap<String, Object> admins = (HashMap<String, Object>) ds.child("admins").getValue();
+        HashMap<String, Object> users = (HashMap<String, Object>) ds.child("users").getValue();
 
         return new Group(uid, name, lowercasedName, city, state, password, admins, users, createdBy, lowercasedCreatedBy, createdByUid);
     }
 
-    public void createGroup(final AppCompatActivity activity, Group newGroup, final byte[] groupLogo, ArrayList<String> currentUserGroups) {
+    public void createGroup(final AppCompatActivity activity, final Group newGroup, final byte[] groupLogo, ArrayList<String> currentUserGroups) {
 
-        DatabaseReference newGroupRef = mDatabase.child("Groups").push();
+        DatabaseReference newGroupRef;
+        if (newGroup.getUid() == null) {
+            newGroupRef = mDatabase.child("Groups").push();
+        } else {
+            newGroupRef = mDatabase.child("Groups").child(newGroup.getUid());
+        }
         final String groupUid = newGroupRef.getKey();
         newGroupRef.setValue(newGroup.toMap()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -326,16 +339,21 @@ public class FirebaseClient {
                     uploadTask.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            updateUserGroups(activity, groupUid);
-                            System.out.println(exception.getMessage());
+                            if (newGroup.getUid() == null) {
+                                updateUserGroups(activity, groupUid);
+                            } else {
+                                activity.finish();
+                            }
                         }
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            System.out.println("photoUploaded");
-                            updateUserGroups(activity, groupUid);
+                            if (newGroup.getUid() == null) {
+                                updateUserGroups(activity, groupUid);
+                            } else {
+                                activity.finish();
+                            }
                             Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            System.out.println(downloadUrl);
                         }
                     });
                 }
