@@ -34,6 +34,10 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
 
     private FirebaseAuth mAuth;
     private CreateGroupFragment createGroupFragment;
+    private HashMap<String, Object> editedAdmins;
+    private HashMap<String, Object> editedUsers;
+
+    private Group groupToEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             getSupportActionBar().setTitle("Create Group");
         } else {
             getSupportActionBar().setTitle("Edit Group");
+            groupToEdit = getIntent().getExtras().getParcelable("groupToEdit");
         }
 
         createGroupFragment = new CreateGroupFragment();
@@ -83,14 +88,20 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             pb.setVisibility(View.INVISIBLE);
         }
 
-        FirebaseUser user = mAuth.getCurrentUser();
+        if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
+            FirebaseUser user = mAuth.getCurrentUser();
+            HashMap<String, Object> admins = new HashMap<String, Object>();
+            admins.put(user.getUid(), user.getDisplayName());
 
-        HashMap<String, Object> admins = new HashMap<String, Object>();
-        admins.put(user.getUid(), user.getDisplayName());
-
-        Group newGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
-                user.getDisplayName().toLowerCase(), user.getUid());
-        new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
+            Group newGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
+                    user.getDisplayName().toLowerCase(), user.getUid());
+            new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
+        } else {
+            System.out.println("Here's where we'd edit the group.");
+            Group editedGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, editedAdmins, editedUsers, groupToEdit.getCreatedBy(),
+                    groupToEdit.getLowercasedCreatedBy(), groupToEdit.getCreatedByUid());
+            new FirebaseClient().createGroup(CreateGroupActivity.this, editedGroup, groupLogo, groupUids);
+        }
 
     }
 
@@ -116,12 +127,17 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         Class manageAdministrators = ManageAdministratorsActivity.class;
         Intent intent = new Intent(getApplicationContext(), manageAdministrators);
         intent.putExtra("groupBeingEdited", groupBeingEdited);
-        startActivity(intent);
+        startActivityForResult(intent, 2);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        System.out.println(requestCode);
+        System.out.println(resultCode);
+        System.out.println(data);
+
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 return;
@@ -139,6 +155,15 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             } catch (FileNotFoundException e) {
                 System.out.println("Error");
             }
+        }
+        if (requestCode == 2) {
+            Group editedGroup = data.getExtras().getParcelable("editedGroup");
+            editedAdmins = editedGroup.getAdmins();
+            editedUsers = editedGroup.getUsers();
+            System.out.println("**************");
+            System.out.println(editedAdmins);
+            System.out.println(editedUsers);
+            System.out.println("**************");
         }
     }
 

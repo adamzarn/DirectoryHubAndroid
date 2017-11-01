@@ -38,8 +38,6 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
     private ArrayList<Group> groups = new ArrayList<>();
     private ArrayList<Group> filteredGroups = new ArrayList<>();
 
-    private OnGroupClickListener clickListener;
-
     @Override
     public MyGroupsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item, parent, false);
@@ -139,6 +137,8 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
             }
         }
     }
+
+    private OnGroupClickListener clickListener;
 
     public interface OnGroupClickListener {
         void onGroupClick(Group selectedGroup);

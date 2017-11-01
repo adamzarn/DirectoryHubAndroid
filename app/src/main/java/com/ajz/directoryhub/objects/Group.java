@@ -74,8 +74,24 @@ public class Group implements Parcelable {
         return users;
     }
 
+    public String getLowercasedCreatedBy() {
+        return lowercasedCreatedBy;
+    }
+
+    public String getCreatedByUid() {
+        return createdByUid;
+    }
+
     public ArrayList<String> getAdminKeys() {
         return new ArrayList<String>(admins.keySet());
+    }
+
+    public void setAdmins(HashMap<String, Object> admins) {
+        this.admins = admins;
+    }
+
+    public void setUsers(HashMap<String, Object> users) {
+        this.users = users;
     }
 
     public Map<String, Object> toMap() {

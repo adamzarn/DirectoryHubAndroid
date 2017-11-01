@@ -1,21 +1,25 @@
 package com.ajz.directoryhub.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.ManageAdministratorsFragment;
+import com.ajz.directoryhub.objects.Group;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by adamzarn on 10/30/17.
  */
 
-public class ManageAdministratorsActivity extends AppCompatActivity {
+public class ManageAdministratorsActivity extends AppCompatActivity implements ManageAdministratorsFragment.OnAdminsEditedListener {
 
     private FirebaseAuth mAuth;
     private ManageAdministratorsFragment manageAdministratorsFragment;
+    private Group editedGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,4 +42,30 @@ public class ManageAdministratorsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("editedGroup", editedGroup);
+        setResult(2, intent);
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("editedGroup", editedGroup);
+                setResult(2, intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void adminsEdited(Group group) {
+        this.editedGroup = group;
+    }
 }

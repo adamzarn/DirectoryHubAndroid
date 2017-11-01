@@ -161,6 +161,7 @@ public class CreateGroupFragment extends Fragment {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     createGroupLogo.setImageBitmap(null);
+                    currentImageData = new byte[0];
                 }
             });
 

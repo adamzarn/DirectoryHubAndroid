@@ -335,27 +335,31 @@ public class FirebaseClient {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     StorageReference storageRef = mStorage.getReference();
-                    UploadTask uploadTask = storageRef.child(groupUid + ".jpg").putBytes(groupLogo);
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            if (newGroup.getUid() == null) {
-                                updateUserGroups(activity, groupUid);
-                            } else {
-                                activity.finish();
+                    if (groupLogo.length > 0) {
+                        UploadTask uploadTask = storageRef.child(groupUid + ".jpg").putBytes(groupLogo);
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                if (newGroup.getUid() == null) {
+                                    updateUserGroups(activity, groupUid);
+                                } else {
+                                    activity.finish();
+                                }
                             }
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            if (newGroup.getUid() == null) {
-                                updateUserGroups(activity, groupUid);
-                            } else {
-                                activity.finish();
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                if (newGroup.getUid() == null) {
+                                    updateUserGroups(activity, groupUid);
+                                } else {
+                                    activity.finish();
+                                }
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
                             }
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        }
-                    });
+                        });
+                    } else {
+                        activity.finish();
+                    }
                 }
             }
         });
