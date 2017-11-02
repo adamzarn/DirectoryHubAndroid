@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.MyGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
@@ -135,6 +136,10 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
 
     public ArrayList<String> getGroupUids() {
         return groupUids;
+    }
+
+    public void displayOnlyAdminAlert() {
+        DialogUtils.showPositiveAlert(MyGroupsActivity.this, "Hold On", "You are the only administrator for this group, so you cannot remove it from \"My Groups\".");
     }
 
 }

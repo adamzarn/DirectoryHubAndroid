@@ -16,6 +16,8 @@ import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.SearchGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
 
+import java.util.ArrayList;
+
 /**
  * Created by adamzarn on 10/26/17.
  */
@@ -56,8 +58,9 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
         dialogBuilder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
-                    FirebaseClient fb = new FirebaseClient();
-                    fb.updateUserGroups(SearchGroupsActivity.this, selectedGroup.getUid());
+                    ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
+                    currentUserGroups.add(selectedGroup.getUid());
+                    new FirebaseClient().updateUserGroups(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups);
                 } else {
                     Toast.makeText(getApplicationContext(),"Incorrect Password",Toast.LENGTH_LONG).show();
                 }

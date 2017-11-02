@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import com.ajz.directoryhub.activities.MyGroupsActivity;
 import com.ajz.directoryhub.adapters.DirectoryAdapter;
 import com.ajz.directoryhub.adapters.MyGroupsAdapter;
 import com.ajz.directoryhub.adapters.SearchGroupsAdapter;
 import com.ajz.directoryhub.fragments.EntryFragment;
-import com.ajz.directoryhub.fragments.MyGroupsFragment;
 import com.ajz.directoryhub.objects.CustomAddress;
 import com.ajz.directoryhub.objects.Entry;
 import com.ajz.directoryhub.objects.Group;
@@ -52,7 +52,7 @@ public class FirebaseClient {
         mStorage = FirebaseStorage.getInstance();
     }
 
-    public void getUserGroups(final MyGroupsActivity activity, final MyGroupsAdapter adapter, String userUid, final ProgressBar pb) {
+    public void getUserGroups(final MyGroupsActivity activity, final MyGroupsAdapter adapter, String userUid, final RecyclerView rv, final ProgressBar pb) {
 
         mDatabase.child("Users").child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -67,7 +67,7 @@ public class FirebaseClient {
                         if (i == groupUids.size()) {
                             finished = true;
                         }
-                        getGroup(adapter, groupUid, pb, finished);
+                        getGroup(adapter, groupUid, rv, pb, finished);
                         i++;
                     }
                 } else {
@@ -83,7 +83,7 @@ public class FirebaseClient {
 
     }
 
-    public void getGroup(final MyGroupsAdapter adapter, String groupUid, final ProgressBar pb, final Boolean finished) {
+    public void getGroup(final MyGroupsAdapter adapter, String groupUid, final RecyclerView rv, final ProgressBar pb, final Boolean finished) {
 
         mDatabase.child("Groups").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -97,6 +97,7 @@ public class FirebaseClient {
 
                 if (finished) {
                     pb.setVisibility(View.INVISIBLE);
+                    rv.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -135,7 +136,7 @@ public class FirebaseClient {
 
     }
 
-    public void getDirectory(final DirectoryAdapter adapter, String groupUid, final ProgressBar pb) {
+    public void getDirectory(final DirectoryAdapter adapter, String groupUid, final RecyclerView rv, final ProgressBar pb) {
 
         mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -143,6 +144,7 @@ public class FirebaseClient {
             public void onDataChange(DataSnapshot ds) {
 
                 pb.setVisibility(View.GONE);
+                rv.setVisibility(View.VISIBLE);
 
                 ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
 
@@ -163,13 +165,14 @@ public class FirebaseClient {
 
     }
 
-    public void getEntry(final EntryFragment fragment, String groupUid, String entryUid, final ProgressBar pb) {
+    public void getEntry(final EntryFragment fragment, String groupUid, String entryUid, final ScrollView sv, final ProgressBar pb) {
 
         mDatabase.child("Directories").child(groupUid).child(entryUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot ds) {
                 pb.setVisibility(View.GONE);
+                sv.setVisibility(View.VISIBLE);
                 Entry selectedEntry = makeEntry(ds);
                 fragment.populateFragment(selectedEntry);
             }
@@ -208,52 +211,53 @@ public class FirebaseClient {
 
     }
 
-    public void updateUserGroups(final AppCompatActivity activity, final String newGroupUid) {
+    public void updateUserGroups(final AppCompatActivity activity, final String groupUid, final ArrayList<String> userGroups) {
+
+        final String userUid = mAuth.getCurrentUser().getUid();
 
         final DatabaseReference userGroupsRef = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("groups");
+        final DatabaseReference adminRef = mDatabase.child("Groups").child(groupUid).child("admins").child(userUid);
 
-        userGroupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference adminsRef = mDatabase.child("Groups").child(groupUid).child("admins");
+        final DatabaseReference usersRef = mDatabase.child("Groups").child(groupUid).child("users").child(userUid);
 
+        adminsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
-
-                ArrayList<String> userGroups = (ArrayList<String>) ds.getValue();
-                if (userGroups == null) {
-                    ArrayList<String> newUserGroups = new ArrayList<String>();
-                    userGroups = newUserGroups;
+                HashMap<String, Object> adminsMap = (HashMap<String, Object>) ds.getValue();
+                if (adminsMap.size() == 1 && adminsMap.containsKey(userUid)) {
+                    ((MyGroupsActivity) activity).displayOnlyAdminAlert();
+                } else {
+                    userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                activity.finish();
+                            } else {
+                                adminRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            activity.finish();
+                                        } else {
+                                            usersRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    activity.finish();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
-                userGroups.add(newGroupUid);
-
-                userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        activity.finish();
-                    }
-                });
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-
         });
-
-    }
-
-    public void deleteFromMyGroups(final MyGroupsFragment fragment, ArrayList<String> currentUserGroups, String groupUid) {
-
-        final DatabaseReference userGroupsRef = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("groups");
-
-        currentUserGroups.remove(groupUid);
-
-        userGroupsRef.setValue(currentUserGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                fragment.reloadData();
-            }
-        });
-
     }
 
     public void addNewUser(String displayName) {
@@ -324,8 +328,12 @@ public class FirebaseClient {
     public void createGroup(final AppCompatActivity activity, final Group newGroup, final byte[] groupLogo, ArrayList<String> currentUserGroups) {
 
         DatabaseReference newGroupRef;
+
+        final ArrayList<String> updatedUserGroups = currentUserGroups;
+
         if (newGroup.getUid() == null) {
             newGroupRef = mDatabase.child("Groups").push();
+            updatedUserGroups.add(newGroupRef.getKey());
         } else {
             newGroupRef = mDatabase.child("Groups").child(newGroup.getUid());
         }
@@ -341,7 +349,7 @@ public class FirebaseClient {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
                                 if (newGroup.getUid() == null) {
-                                    updateUserGroups(activity, groupUid);
+                                    updateUserGroups(activity, groupUid, updatedUserGroups);
                                 } else {
                                     activity.finish();
                                 }
@@ -350,7 +358,7 @@ public class FirebaseClient {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 if (newGroup.getUid() == null) {
-                                    updateUserGroups(activity, groupUid);
+                                    updateUserGroups(activity, groupUid, updatedUserGroups);
                                 } else {
                                     activity.finish();
                                 }
@@ -361,6 +369,26 @@ public class FirebaseClient {
                         activity.finish();
                     }
                 }
+            }
+        });
+
+    }
+
+    public void addEntry(final AppCompatActivity activity, String groupUid, Entry entry) {
+
+        DatabaseReference directoryRef = mDatabase.child("Directories").child(groupUid);
+
+        DatabaseReference entryRef;
+        if (StringUtils.isMissing(entry.getUid())) {
+            entryRef = directoryRef.push();
+        } else {
+            entryRef = directoryRef.child(entry.getUid());
+        }
+
+        entryRef.setValue(entry.toMap()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                activity.finish();
             }
         });
 

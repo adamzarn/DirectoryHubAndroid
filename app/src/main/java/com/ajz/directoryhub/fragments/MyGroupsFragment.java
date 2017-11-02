@@ -22,6 +22,8 @@ import com.ajz.directoryhub.adapters.MyGroupsAdapter;
 import com.ajz.directoryhub.objects.Group;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -136,7 +138,7 @@ public class MyGroupsFragment extends Fragment {
 
     }
 
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -144,10 +146,25 @@ public class MyGroupsFragment extends Fragment {
         }
 
         @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            int position = viewHolder.getAdapterPosition();
+            Group swipedGroup = myGroupsAdapter.getGroup(position);
+            ArrayList<String> admins = swipedGroup.getAdminKeys();
+            if (admins.size() == 1 && admins.contains(mAuth.getCurrentUser().getUid())) {
+                return 0;
+            } else {
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+        }
+
+        @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
             String groupUid = myGroupsAdapter.getGroup(position).getUid();
-            new FirebaseClient().deleteFromMyGroups(MyGroupsFragment.this, ((MyGroupsActivity) getActivity()).getGroupUids(), groupUid);
+            ArrayList<String> groupUids = ((MyGroupsActivity) getActivity()).getGroupUids();
+            groupUids.remove(groupUid);
+            new FirebaseClient().updateUserGroups(((MyGroupsActivity) getActivity()), groupUid, groupUids);
+            //new FirebaseClient().deleteFromMyGroups(MyGroupsFragment.this, ((MyGroupsActivity) getActivity()).getGroupUids(), groupUid);
         }
 
     };
@@ -155,14 +172,14 @@ public class MyGroupsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        myGroupsRecyclerView.setVisibility(View.INVISIBLE);
         reloadData();
     }
 
     public void reloadData() {
         loadingGroupsProgressBar.setVisibility(View.VISIBLE);
         myGroupsAdapter.clearData();
-        FirebaseClient fb = new FirebaseClient();
-        fb.getUserGroups((MyGroupsActivity) getActivity(), myGroupsAdapter, userUid, loadingGroupsProgressBar);
+        new FirebaseClient().getUserGroups((MyGroupsActivity) getActivity(), myGroupsAdapter, userUid, myGroupsRecyclerView, loadingGroupsProgressBar);
     }
 
     @Override
@@ -176,3 +193,4 @@ public class MyGroupsFragment extends Fragment {
     }
 
 }
+

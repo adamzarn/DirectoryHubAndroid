@@ -40,6 +40,8 @@ public class DirectoryFragment extends Fragment {
     @BindView(R.id.add_entry_fab)
     FloatingActionButton addEntryFab;
 
+    private DirectoryAdapter directoryAdapter;
+
     public DirectoryFragment() {
     }
 
@@ -67,7 +69,7 @@ public class DirectoryFragment extends Fragment {
 
         directoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        final DirectoryAdapter directoryAdapter = new DirectoryAdapter();
+        directoryAdapter = new DirectoryAdapter();
         directoryRecyclerView.setAdapter(directoryAdapter);
         directoryAdapter.setSearching(false);
 
@@ -107,12 +109,20 @@ public class DirectoryFragment extends Fragment {
             addEntryFab.setVisibility(View.GONE);
         }
 
-        directoryProgressBar.setVisibility(View.VISIBLE);
-        FirebaseClient fb = new FirebaseClient();
-        fb.getDirectory(directoryAdapter, getArguments().getString("groupUid"), directoryProgressBar);
-
         return rootView;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        directoryRecyclerView.setVisibility(View.INVISIBLE);
+        reloadData();
+    }
+
+    public void reloadData() {
+        directoryProgressBar.setVisibility(View.VISIBLE);
+        new FirebaseClient().getDirectory(directoryAdapter, getArguments().getString("groupUid"), directoryRecyclerView, directoryProgressBar);
     }
 
     @Override

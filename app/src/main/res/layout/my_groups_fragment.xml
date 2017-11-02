@@ -35,7 +35,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_groups_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="#f44242"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_group_fab"

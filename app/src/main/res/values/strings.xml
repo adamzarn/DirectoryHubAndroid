@@ -17,6 +17,7 @@
     <string name="entry_email_header_text">Email</string>
     <string name="entry_address_header_text">Address</string>
     <string name="entry_contact_info_header_text">Contact Info</string>
+    <string name="entry_adults_header_text">Adults</string>
     <string name="entry_children_header_text">Children</string>
 
     <string name="logout_menu_item_text">Logout</string>
@@ -29,11 +30,36 @@
     <string name="group_name_label_text">GROUP NAME</string>
     <string name="city_label_text">CITY</string>
     <string name="state_label_text">STATE</string>
+    <string name="zip_label_text">ZIP</string>
     <string name="password_label_text">PASSWORD</string>
     <string name="group_logo_label_text">GROUP LOGO</string>
     <string name="upload_photo_button_text">UPLOAD PHOTO</string>
     <string name="remove_photo_button_text">REMOVE PHOTO</string>
     <string name="manage_administrators_button_text">MANAGE ADMINISTRATORS</string>
-    <string name='submit_item_text'>SUBMIT</string>
+    <string name="submit_item_text">SUBMIT</string>
+
+    <string name="entry_last_name_label_text">LAST NAME</string>
+    <string name="entry_phone_label_text">PHONE</string>
+    <string name="entry_email_label_text">EMAIL</string>
+    <string name="entry_address_label_text">ADDRESS</string>
+    <string name="entry_street_label_text">STREET</string>
+    <string name="entry_line2_label_text">LINE 2</string>
+    <string name="entry_line3_label_text">LINE 3</string>
+    <string name="entry_people_label_text">PEOPLE</string>
+    <string name="entry_people_add_button_text">ADD</string>
+
+    <string name="person_first_name_placeholder">First Name</string>
+    <string name="person_type_placeholder">Type</string>
+    <string name="person_birth_order_placeholoder">Birth Order</string>
+    <string name="person_phone_placeholoder">Phone</string>
+    <string name="person_email_placeholder">Email</string>
+
+    <string-array name="person_type_options">
+        <item></item>
+        <item>Husband</item>
+        <item>Wife</item>
+        <item>Single</item>
+        <item>Child</item>
+    </string-array>
 
 </resources>

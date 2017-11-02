@@ -1,18 +1,26 @@
 package com.ajz.directoryhub.adapters;
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.objects.Group;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by adamzarn on 10/26/17.
@@ -21,10 +29,14 @@ import butterknife.ButterKnife;
 public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapter.ViewHolder> {
 
     private ArrayList<Group> groups = new ArrayList<>();
+    private FirebaseStorage mStorage;
 
     private OnGroupClickListener clickListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        @BindView(R.id.group_logo)
+        CircleImageView groupLogoImageView;
 
         @BindView(R.id.group_name_text_view)
         TextView groupNameTextView;
@@ -35,9 +47,13 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
         @BindView(R.id.created_by_text_view)
         TextView createdByTextView;
 
+        @BindView(R.id.edit_group_button)
+        Button editGroupButton;
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            mStorage = FirebaseStorage.getInstance();
             view.setOnClickListener(this);
         }
 
@@ -55,12 +71,27 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
     }
 
     @Override
-    public void onBindViewHolder(SearchGroupsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Group group = groups.get(position);
         holder.groupNameTextView.setText(group.getName());
         holder.cityStateTextView.setText(group.getCity() + ", " + group.getState());
         String createdByString = "Created by: " + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
+        holder.editGroupButton.setVisibility(View.GONE);
+
+        holder.groupLogoImageView.setImageBitmap(null);
+        mStorage.getReference().child(group.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(holder.groupLogoImageView.getContext()).load(uri.toString()).into(holder.groupLogoImageView);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                holder.groupLogoImageView.setImageBitmap(null);
+            }
+        });
+
     }
 
     @Override

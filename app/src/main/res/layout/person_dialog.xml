@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/margin_sm">
+
+    <EditText
+        android:id="@+id/person_first_name_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/person_first_name_placeholder"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <Spinner
+            android:id="@+id/person_type_spinner"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="@string/person_type_placeholder"/>
+
+        <NumberPicker
+            android:id="@+id/birth_order_number_picker"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="@string/person_birth_order_placeholoder"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/person_phone_edit_text"
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/person_phone_placeholoder"/>
+
+    <EditText
+        android:id="@+id/person_email_edit_text"
+        android:inputType="textEmailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/person_email_placeholder"/>
+
+</LinearLayout>

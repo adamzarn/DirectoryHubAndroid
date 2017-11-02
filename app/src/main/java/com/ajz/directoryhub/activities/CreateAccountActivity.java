@@ -27,6 +27,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class CreateAccountActivity extends AppCompatActivity implements CreateAccountFragment.ClickListener {
 
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +28,19 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by adamzarn on 10/24/17.
  */
 
 public class EntryFragment extends Fragment {
+
+    private Entry currentEntry;
+    private Bundle args;
+
+    @BindView(R.id.entry_scroll_view)
+    ScrollView entryScrollView;
 
     ///PHONE///
 
@@ -109,12 +117,28 @@ public class EntryFragment extends Fragment {
     @BindView(R.id.edit_entry_fab)
     FloatingActionButton editEntryFab;
 
+    @OnClick(R.id.edit_entry_fab)
+    public void editEntry() {
+        mCallback.onEditEntry(currentEntry);
+    }
+
     public EntryFragment() {
+    }
+
+    OnEditEntryClickListener mCallback;
+
+    public interface OnEditEntryClickListener {
+        void onEditEntry(Entry entryToEdit);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        try {
+            mCallback = (OnEditEntryClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Must implement ClickListener");
+        }
     }
 
     @Override
@@ -123,18 +147,26 @@ public class EntryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.entry_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        FirebaseClient fb = new FirebaseClient();
-        Bundle args = getArguments();
+        args = getArguments();
 
         if (!getArguments().getBoolean("isAdmin")) {
             editEntryFab.setVisibility(View.GONE);
         }
 
-        entryProgressBar.setVisibility(View.VISIBLE);
-        fb.getEntry(this, args.getString("groupUid"), args.getString("entryUid"), entryProgressBar);
-
         return rootView;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        entryScrollView.setVisibility(View.INVISIBLE);
+        reloadData();
+    }
+
+    public void reloadData() {
+        entryProgressBar.setVisibility(View.VISIBLE);
+        new FirebaseClient().getEntry(this, args.getString("groupUid"), args.getString("entryUid"), entryScrollView, entryProgressBar);
     }
 
     @Override
@@ -148,6 +180,8 @@ public class EntryFragment extends Fragment {
     }
 
     public void populateFragment(final Entry selectedEntry) {
+
+        currentEntry = selectedEntry;
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(selectedEntry.getTitle());
 
@@ -234,6 +268,10 @@ public class EntryFragment extends Fragment {
             }
         }
 
+        int adultCount = contactInfoLinearLayout.getChildCount() - 1;
+        for (int i = adultCount; i > 0; i--) {
+            contactInfoLinearLayout.removeViewAt(i);
+        }
         for (Person adult : adults) {
             addPersonTextViews(contactInfoLinearLayout, adult);
 
@@ -244,6 +282,10 @@ public class EntryFragment extends Fragment {
 
         }
 
+        int childCount = childrenLinearLayout.getChildCount() - 1;
+        for (int i = childCount; i > 0; i--) {
+            childrenLinearLayout.removeViewAt(i);
+        }
         if (children.size() == 0) {
             childrenHeaderTextView.setVisibility(View.GONE);
         } else {

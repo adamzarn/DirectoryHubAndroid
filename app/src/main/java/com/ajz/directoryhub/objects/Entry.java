@@ -1,16 +1,21 @@
 package com.ajz.directoryhub.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by adamzarn on 10/22/17.
  */
 
-public class Entry {
+public class Entry implements Parcelable {
 
     private String uid;
     private String name;
@@ -50,6 +55,26 @@ public class Entry {
 
     public ArrayList<Person> getPeople() {
         return this.people;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAddress(CustomAddress address) {
+        this.address = address;
+    }
+
+    public void setPeople(ArrayList<Person> people) {
+        this.people = people;
     }
 
     public String getHeader() {
@@ -135,6 +160,61 @@ public class Entry {
         } else {
             return "The " + this.getName() + " Family";
         }
+    }
+
+    private Entry(Parcel parcel) {
+        this.uid = parcel.readString();
+        this.name = parcel.readString();
+        this.phone = parcel.readString();
+        this.email = parcel.readString();
+        this.address = parcel.readParcelable(Entry.class.getClassLoader());
+        this.people = new ArrayList<Person>();
+        parcel.readTypedList(people, Person.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(uid);
+        parcel.writeString(name);
+        parcel.writeString(phone);
+        parcel.writeString(email);
+        parcel.writeParcelable(address, i);
+        parcel.writeTypedList(people);
+    }
+
+    public static final Parcelable.Creator<Entry> CREATOR
+            = new Parcelable.Creator<Entry>() {
+
+        public Entry createFromParcel(Parcel in) {
+            return new Entry(in);
+        }
+
+        public Entry[] newArray(int size) {
+            return new Entry[size];
+        }
+    };
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> entry = new HashMap<String, Object>();
+        entry.put("name", name);
+        entry.put("phone", phone);
+        entry.put("email", email);
+        entry.put("Address", address.toMap());
+        entry.put("People", peopleToMap(people));
+        return entry;
+    }
+
+    public Map<String, Object> peopleToMap(ArrayList<Person> peopleArrayList) {
+        Map<String, Object> people = new HashMap<String, Object>();
+        for (Person person : peopleArrayList) {
+            people.put(UUID.randomUUID().toString(), person.toMap());
+        }
+        return people;
     }
 
 }
