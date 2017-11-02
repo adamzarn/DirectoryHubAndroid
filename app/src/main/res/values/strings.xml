@@ -54,12 +54,4 @@
     <string name="person_phone_placeholoder">Phone</string>
     <string name="person_email_placeholder">Email</string>
 
-    <string-array name="person_type_options">
-        <item></item>
-        <item>Husband</item>
-        <item>Wife</item>
-        <item>Single</item>
-        <item>Child</item>
-    </string-array>
-
 </resources>

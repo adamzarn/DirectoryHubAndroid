@@ -24,8 +24,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/person_type_placeholder"/>
 
-        <NumberPicker
-            android:id="@+id/birth_order_number_picker"
+        <Spinner
+            android:id="@+id/birth_order_spinner"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

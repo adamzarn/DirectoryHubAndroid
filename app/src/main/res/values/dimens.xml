@@ -13,7 +13,7 @@
     <dimen name="button_height">40dp</dimen>
     <dimen name="long_button_width">200dp</dimen>
 
-    <dimen name="font_xs">8sp</dimen>
+    <dimen name="font_xs">18sp</dimen>
     <dimen name="font_sm">20sp</dimen>
     <dimen name="font_md">24sp</dimen>
     <dimen name="font_lg">32sp</dimen>

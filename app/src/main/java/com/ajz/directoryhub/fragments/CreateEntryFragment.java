@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
+import com.ajz.directoryhub.StringUtils;
 import com.ajz.directoryhub.objects.CustomAddress;
 import com.ajz.directoryhub.objects.Entry;
 import com.ajz.directoryhub.objects.Person;
@@ -28,6 +29,8 @@ import java.util.Comparator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.R.id.message;
 
 /**
  * Created by adamzarn on 11/1/17.
@@ -111,10 +114,11 @@ public class CreateEntryFragment extends Fragment {
             entryToEdit.setPhone(phone);
             entryToEdit.setEmail(email);
             entryToEdit.setAddress(address);
+            entryToEdit.setPeople(newPeople);
             mCallback.submitButtonClicked(entryToEdit);
         } else {
             Entry newEntry = new Entry(null, lastName, phone, email, address, newPeople);
-            mCallback.submitButtonClicked(entryToEdit);
+            mCallback.submitButtonClicked(newEntry);
         }
     }
 
@@ -122,6 +126,7 @@ public class CreateEntryFragment extends Fragment {
         void onFocusChange(View view);
         void onPersonSelected(Person selectedPerson, String title);
         void submitButtonClicked(Entry entry);
+        void displayInvalidPersonAlert(String title, String message);
     }
 
     public CreateEntryFragment() {
@@ -145,6 +150,7 @@ public class CreateEntryFragment extends Fragment {
 
         if (getArguments().getParcelable("entryToEdit") != null) {
             entryToEdit = getArguments().getParcelable("entryToEdit");
+            newPeople = entryToEdit.getPeople();
             populateInfo();
             populatePeople();
             createEntryButton.setText("SUBMIT CHANGES");
@@ -244,20 +250,20 @@ public class CreateEntryFragment extends Fragment {
 
         TextView nameTextView = new TextView(getActivity());
         formatTextView(nameTextView);
-        nameTextView.setText(person.getName());
+        nameTextView.setText(person.getName() + ", " + person.getType());
         clickablePersonLinearLayout.addView(nameTextView);
 
         if (!TextUtils.equals(person.getPhone(),"")) {
             TextView phoneTextView = new TextView(getActivity());
             formatTextView(phoneTextView);
-            phoneTextView.setText(person.getPhone());
+            phoneTextView.setText("Phone: " + person.getPhone());
             clickablePersonLinearLayout.addView(phoneTextView);
         }
 
         if (!TextUtils.equals(person.getEmail(),"")) {
             TextView emailTextView = new TextView(getActivity());
             formatTextView(emailTextView);
-            emailTextView.setText(person.getEmail());
+            emailTextView.setText("Email: " + person.getEmail());
             clickablePersonLinearLayout.addView(emailTextView);
         }
 
@@ -294,6 +300,16 @@ public class CreateEntryFragment extends Fragment {
     }
 
     public void updatePeople(Person newPerson) {
+
+        System.out.println("Here");
+
+        if (!validateNewPerson(newPerson)) {
+            System.out.println("Not Validated");
+            return;
+        } else {
+            System.out.println("Validated");
+        }
+
         ArrayList<Person> people = entryToEdit.getPeople();
         Boolean notFound = true;
         for (Person person : people) {
@@ -305,12 +321,90 @@ public class CreateEntryFragment extends Fragment {
         if (notFound) {
             people.add(newPerson);
         }
-        if (entryToEdit != null) {
-            entryToEdit.setPeople(people);
-        } else {
-            newPeople = people;
-        }
+        newPeople = people;
         populatePeople();
+    }
+
+    private Boolean validateNewPerson(Person newPerson) {
+
+        if (StringUtils.isMissing(newPerson.getName())) {
+            mCallback.displayInvalidPersonAlert("No Name", "You must enter a first name.");
+            return false;
+        }
+
+        if (StringUtils.isMissing(newPerson.getType())) {
+            mCallback.displayInvalidPersonAlert("No Type", "Each person must have a type.");
+            return false;
+        }
+
+        if (newPerson.getPhone().length() < 12 && newPerson.getPhone().length() > 0) {
+            mCallback.displayInvalidPersonAlert("Bad Phone Number", "Phone Number must be 12 characters long.");
+            return false;
+        }
+
+        if (TextUtils.equals(newPerson.getType(),"Child") && newPerson.getBirthOrder() == 0) {
+            mCallback.displayInvalidPersonAlert("Missing Birth Order", "Children must have a birth order.");
+            return false;
+        }
+
+        if (!TextUtils.equals(newPerson.getType(),"Child")) {
+            if (getOtherPersonTypes(newPerson).contains(newPerson.getType())) {
+                mCallback.displayInvalidPersonAlert("Duplicate Person Type", "Entries can only contain one " + newPerson.getType() + ".");
+                return false;
+            }
+        }
+
+        if (TextUtils.equals(newPerson.getType(), "Husband") || TextUtils.equals(newPerson.getType(), "Wife")) {
+            if (getOtherPersonTypes(newPerson).contains("Single")) {
+                mCallback.displayInvalidPersonAlert("Error", "Married couples and adult Singles cannot be in the same entry.");
+                return false;
+            }
+        }
+
+        if (TextUtils.equals(newPerson.getType(),"Single")) {
+            if (getOtherPersonTypes(newPerson).contains("Husband") || getOtherPersonTypes(newPerson).contains("Wife")) {
+                mCallback.displayInvalidPersonAlert("Error", "Married couples and adult Singles cannot be in the same entry.");
+                return false;
+            }
+        }
+
+        if (newPerson.getBirthOrder() != 0) {
+            if (getOtherBirthOrders(newPerson).contains(newPerson.getBirthOrder())) {
+                mCallback.displayInvalidPersonAlert("Bad Birth Order", "Birth Order must be unique.");
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    private ArrayList<String> getOtherPersonTypes(Person newPerson) {
+        ArrayList<String> personTypes = new ArrayList<>();
+        if (newPeople == null) {
+            return personTypes;
+        } else {
+            for (Person person : newPeople) {
+                if (!TextUtils.equals(person.getUid(), newPerson.getUid())) {
+                    personTypes.add(person.getType());
+                }
+            }
+            return personTypes;
+        }
+    }
+
+    private ArrayList<Integer> getOtherBirthOrders(Person newPerson) {
+        ArrayList<Integer> birthOrders = new ArrayList<>();
+        if (newPeople == null) {
+            return birthOrders;
+        } else {
+            for (Person person : newPeople) {
+                if (!TextUtils.equals(person.getUid(), newPerson.getUid())) {
+                    birthOrders.add(person.getBirthOrder());
+                }
+            }
+            return birthOrders;
+        }
     }
 
 
