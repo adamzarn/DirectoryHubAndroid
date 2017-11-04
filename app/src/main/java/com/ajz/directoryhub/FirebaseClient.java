@@ -211,45 +211,62 @@ public class FirebaseClient {
 
     }
 
-    public void updateUserGroups(final AppCompatActivity activity, final String groupUid, final ArrayList<String> userGroups) {
+    public void joinGroup(final AppCompatActivity activity, final String groupUid, final ArrayList<String> userGroups, String userType) {
+
+        final String userUid = mAuth.getCurrentUser().getUid();
+        final String displayName = mAuth.getCurrentUser().getDisplayName();
+
+        final DatabaseReference userGroupsRef = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("groups");
+        final DatabaseReference groupUsersRef = mDatabase.child("Groups").child(groupUid).child(userType).child(userUid);
+
+        userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    groupUsersRef.setValue(displayName).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            activity.finish();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void deleteFromMyGroups(final MyGroupsActivity activity, final String groupUid, final ArrayList<String> userGroups) {
 
         final String userUid = mAuth.getCurrentUser().getUid();
 
         final DatabaseReference userGroupsRef = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("groups");
-        final DatabaseReference adminRef = mDatabase.child("Groups").child(groupUid).child("admins").child(userUid);
+
+        final DatabaseReference groupRef = mDatabase.child("Groups").child(groupUid);
 
         final DatabaseReference adminsRef = mDatabase.child("Groups").child(groupUid).child("admins");
-        final DatabaseReference usersRef = mDatabase.child("Groups").child(groupUid).child("users").child(userUid);
 
         adminsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
-                HashMap<String, Object> adminsMap = (HashMap<String, Object>) ds.getValue();
+                final HashMap<String, Object> adminsMap = (HashMap<String, Object>) ds.getValue();
+
                 if (adminsMap.size() == 1 && adminsMap.containsKey(userUid)) {
-                    ((MyGroupsActivity) activity).displayOnlyAdminAlert();
+                        activity.displayOnlyAdminAlert();
                 } else {
                     userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                activity.finish();
+                            DatabaseReference groupUsersRef;
+                            if (adminsMap.containsKey(userUid)) {
+                                groupUsersRef = groupRef.child("admins").child(userUid);
                             } else {
-                                adminRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            activity.finish();
-                                        } else {
-                                            usersRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    activity.finish();
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
+                                groupUsersRef = groupRef.child("users").child(userUid);
                             }
+                            groupUsersRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    activity.finish();
+                                }
+                            });
                         }
                     });
                 }
@@ -309,9 +326,7 @@ public class FirebaseClient {
     public Group makeGroup(DataSnapshot ds) {
 
         String uid = ds.getKey();
-        System.out.println(uid);
         String name = getValue(ds, "name");
-        System.out.println(name);
         String lowercasedName = getValue(ds, "lowercasedName");
         String city = getValue(ds, "city");
         String state = getValue(ds, "state");
@@ -349,7 +364,7 @@ public class FirebaseClient {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
                                 if (newGroup.getUid() == null) {
-                                    updateUserGroups(activity, groupUid, updatedUserGroups);
+                                    joinGroup(activity, groupUid, updatedUserGroups, "admins");
                                 } else {
                                     activity.finish();
                                 }
@@ -358,11 +373,46 @@ public class FirebaseClient {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 if (newGroup.getUid() == null) {
-                                    updateUserGroups(activity, groupUid, updatedUserGroups);
+                                    joinGroup(activity, groupUid, updatedUserGroups, "admins");
                                 } else {
                                     activity.finish();
                                 }
                                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            }
+                        });
+                    } else {
+                        if (newGroup.getUid() == null) {
+                            joinGroup(activity, groupUid, updatedUserGroups, "admins");
+                        } else {
+                            activity.finish();
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void editGroup(final AppCompatActivity activity, final Group newGroup, final byte[] groupLogo) {
+
+        DatabaseReference groupRef = mDatabase.child("Groups").child(newGroup.getUid());
+        final String groupUid = groupRef.getKey();
+        groupRef.setValue(newGroup.toMap()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    StorageReference storageRef = mStorage.getReference();
+                    if (groupLogo.length > 0) {
+                        UploadTask uploadTask = storageRef.child(groupUid + ".jpg").putBytes(groupLogo);
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                activity.finish();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                activity.finish();
                             }
                         });
                     } else {
@@ -371,7 +421,6 @@ public class FirebaseClient {
                 }
             }
         });
-
     }
 
     public void addEntry(final AppCompatActivity activity, String groupUid, Entry entry) {

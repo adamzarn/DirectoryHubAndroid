@@ -21,6 +21,7 @@ import com.ajz.directoryhub.objects.Entry;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by adamzarn on 10/21/17.
@@ -40,6 +41,11 @@ public class DirectoryFragment extends Fragment {
     @BindView(R.id.add_entry_fab)
     FloatingActionButton addEntryFab;
 
+    @OnClick(R.id.add_entry_fab)
+    public void addEntry() {
+        mCallback.onAddEntrySelected();
+    }
+
     private DirectoryAdapter directoryAdapter;
 
     public DirectoryFragment() {
@@ -49,6 +55,7 @@ public class DirectoryFragment extends Fragment {
 
     public interface OnEntryClickListener {
         void onEntrySelected(Entry selectedEntry);
+        void onAddEntrySelected();
     }
 
     @Override

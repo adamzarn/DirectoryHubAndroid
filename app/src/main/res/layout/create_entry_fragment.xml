@@ -62,6 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:maxLength="12"
                     android:layout_marginBottom="@dimen/margin_sm"/>
 
             </LinearLayout>
@@ -209,8 +210,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/state_label_text"
                         tools:text="STATE" />
-                    <EditText
-                        android:id="@+id/state_edit_text"
+                    <Spinner
+                        android:id="@+id/state_spinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

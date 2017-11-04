@@ -51,6 +51,8 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         } else {
             getSupportActionBar().setTitle("Edit Group");
             groupToEdit = getIntent().getExtras().getParcelable("groupToEdit");
+            editedAdmins = groupToEdit.getAdmins();
+            editedUsers = groupToEdit.getUsers();
         }
 
         createGroupFragment = new CreateGroupFragment();
@@ -86,6 +88,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         if (StringUtils.isMissing(password)) {
             DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing Password", "Please provide a password.");
             pb.setVisibility(View.INVISIBLE);
+            return;
         }
 
         if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
@@ -97,10 +100,9 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                     user.getDisplayName().toLowerCase(), user.getUid());
             new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
         } else {
-            System.out.println("Here's where we'd edit the group.");
             Group editedGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, editedAdmins, editedUsers, groupToEdit.getCreatedBy(),
                     groupToEdit.getLowercasedCreatedBy(), groupToEdit.getCreatedByUid());
-            new FirebaseClient().createGroup(CreateGroupActivity.this, editedGroup, groupLogo, groupUids);
+            new FirebaseClient().editGroup(CreateGroupActivity.this, editedGroup, groupLogo);
         }
 
     }
@@ -134,10 +136,6 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        System.out.println(requestCode);
-        System.out.println(resultCode);
-        System.out.println(data);
-
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 return;
@@ -160,10 +158,6 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             Group editedGroup = data.getExtras().getParcelable("editedGroup");
             editedAdmins = editedGroup.getAdmins();
             editedUsers = editedGroup.getUsers();
-            System.out.println("**************");
-            System.out.println(editedAdmins);
-            System.out.println(editedUsers);
-            System.out.println("**************");
         }
     }
 

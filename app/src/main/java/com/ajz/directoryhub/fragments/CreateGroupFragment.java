@@ -12,9 +12,11 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
@@ -52,8 +54,8 @@ public class CreateGroupFragment extends Fragment {
     @BindView(R.id.city_edit_text)
     EditText cityEditText;
 
-    @BindView(R.id.state_edit_text)
-    EditText stateEditText;
+    @BindView(R.id.state_spinner)
+    Spinner stateSpinner;
 
     @BindView(R.id.create_group_password_edit_text)
     EditText passwordEditText;
@@ -98,7 +100,7 @@ public class CreateGroupFragment extends Fragment {
         }
         String groupName = groupNameEditText.getText().toString();
         String city = cityEditText.getText().toString();
-        String state = stateEditText.getText().toString();
+        String state = stateSpinner.getSelectedItem().toString();
         String password = passwordEditText.getText().toString();
         mCallback.onButtonClick(groupUid, groupUids, groupName, city, state, password, currentImageData, submitCreateGroupProgressBar);
     }
@@ -135,6 +137,24 @@ public class CreateGroupFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.create_group_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
+        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+                "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"));
+        ArrayAdapter<String> stateAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, stateArray) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = convertView;
+                if (v == null) {
+                    Context mContext = this.getContext();
+                    LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    v = vi.inflate(R.layout.dropdown_row, null);
+                }
+                TextView tv = (TextView) v.findViewById(R.id.spinnerTarget);
+                tv.setText(stateArray.get(position));
+                return v;
+            }
+        };
+        stateSpinner.setAdapter(stateAdapter);
+
         currentImageData = new byte[0];
 
         if (getArguments().getStringArrayList("groupUids") != null) {
@@ -149,7 +169,7 @@ public class CreateGroupFragment extends Fragment {
             groupUidTextView.setText("UNIQUE ID: " + groupToEdit.getUid());
             groupNameEditText.setText(groupToEdit.getName());
             cityEditText.setText(groupToEdit.getCity());
-            stateEditText.setText(groupToEdit.getState());
+            stateSpinner.setSelection(stateAdapter.getPosition(groupToEdit.getState()));
             passwordEditText.setText(groupToEdit.getPassword());
 
             mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -176,7 +196,7 @@ public class CreateGroupFragment extends Fragment {
         }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(
-                Arrays.asList(groupNameEditText, cityEditText, stateEditText, passwordEditText));
+                Arrays.asList(groupNameEditText, cityEditText, passwordEditText));
 
         for (EditText editText : editTexts) {
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

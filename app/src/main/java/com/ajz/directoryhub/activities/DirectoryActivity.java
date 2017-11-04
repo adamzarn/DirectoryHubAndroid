@@ -53,6 +53,14 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
     }
 
     @Override
+    public void onAddEntrySelected() {
+        Class createEntry = CreateEntryActivity.class;
+        Intent intent = new Intent(getApplicationContext(), createEntry);
+        intent.putExtra("groupUid", getIntent().getExtras().getString("groupUid"));
+        startActivity(intent);
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("groupUid", groupUid);

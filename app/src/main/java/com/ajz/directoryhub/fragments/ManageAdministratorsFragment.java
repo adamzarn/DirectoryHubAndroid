@@ -67,6 +67,8 @@ public class ManageAdministratorsFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         group = getArguments().getParcelable("groupBeingEdited");
 
+        adminsEditedListener.adminsEdited(group);
+
         manageAdministratorsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         final ManageAdministratorsAdapter manageAdministratorsAdapter = new ManageAdministratorsAdapter();

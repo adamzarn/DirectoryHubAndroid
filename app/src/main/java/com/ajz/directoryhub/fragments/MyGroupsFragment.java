@@ -163,8 +163,7 @@ public class MyGroupsFragment extends Fragment {
             String groupUid = myGroupsAdapter.getGroup(position).getUid();
             ArrayList<String> groupUids = ((MyGroupsActivity) getActivity()).getGroupUids();
             groupUids.remove(groupUid);
-            new FirebaseClient().updateUserGroups(((MyGroupsActivity) getActivity()), groupUid, groupUids);
-            //new FirebaseClient().deleteFromMyGroups(MyGroupsFragment.this, ((MyGroupsActivity) getActivity()).getGroupUids(), groupUid);
+            new FirebaseClient().deleteFromMyGroups((MyGroupsActivity) getActivity(), groupUid, groupUids);
         }
 
     };

@@ -7,17 +7,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.CreateEntryFragment;
@@ -35,6 +37,8 @@ import java.util.UUID;
 public class CreateEntryActivity extends AppCompatActivity implements CreateEntryFragment.ClickListener {
 
     private CreateEntryFragment createEntryFragment;
+    private Person pendingPerson;
+    private String currentPersonDialogTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,9 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
 
     @Override
     public void onPersonSelected(final Person selectedPerson, String title) {
+
+        currentPersonDialogTitle = title;
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
@@ -82,6 +89,23 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         final Spinner birthOrderSpinner = (Spinner) personView.findViewById(R.id.birth_order_spinner);
         final EditText phoneEditText = (EditText) personView.findViewById(R.id.person_phone_edit_text);
         final EditText emailEditText = (EditText) personView.findViewById(R.id.person_email_edit_text);
+
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!TextUtils.equals(typeSpinner.getItemAtPosition(i).toString(),"Child")) {
+                    birthOrderSpinner.setEnabled(false);
+                    birthOrderSpinner.setSelection(0);
+                } else {
+                    birthOrderSpinner.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         final ArrayList<String> typeArray = new ArrayList<String>(Arrays.asList("Type", "Husband", "Wife", "Single", "Child"));
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, typeArray) {
@@ -137,12 +161,60 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         };
         birthOrderSpinner.setAdapter(birthOrderAdapter);
 
+        phoneEditText.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+
+            private boolean backspacingFlag = false;
+            private boolean editedFlag = false;
+            private int cursorComplement;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                cursorComplement = s.length()-phoneEditText.getSelectionStart();
+                if (count > after) {
+                    backspacingFlag = true;
+                } else {
+                    backspacingFlag = false;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                String phone = string.replaceAll("[^\\d]", "");
+
+                if (!editedFlag) {
+
+                    if (phone.length() >= 6 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = phone.substring(0, 3) + "-" + phone.substring(3,6) + "-" + phone.substring(6);
+                        phoneEditText.setText(ans);
+                        phoneEditText.setSelection(phoneEditText.getText().length()-cursorComplement);
+                    } else if (phone.length() >= 3 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = phone.substring(0, 3) + "-" + phone.substring(3);
+                        phoneEditText.setText(ans);
+                        phoneEditText.setSelection(phoneEditText.getText().length()-cursorComplement);
+                    }
+
+                } else {
+                    editedFlag = false;
+                }
+            }
+        });
+
         if (selectedPerson != null) {
             firstNameEditText.setText(selectedPerson.getName());
             typeSpinner.setSelection(typeAdapter.getPosition(selectedPerson.getType()));
             birthOrderSpinner.setSelection(birthOrderAdapter.getPosition(String.valueOf(selectedPerson.getBirthOrder())));
             phoneEditText.setText(selectedPerson.getPhone());
             emailEditText.setText(selectedPerson.getEmail());
+            if (!TextUtils.equals(selectedPerson.getType(),"Child")) {
+                birthOrderSpinner.setEnabled(false);
+            }
         }
 
         dialogBuilder.setTitle(title);
@@ -179,6 +251,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                         phoneEditText.getText().toString(),
                         emailEditText.getText().toString(),
                         birthOrder);
+                pendingPerson = newPerson;
                 createEntryFragment.updatePeople(newPerson);
             }
         });
@@ -198,8 +271,25 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
     }
 
     @Override
-    public void displayInvalidPersonAlert(String title, String message) {
-        DialogUtils.showPositiveAlert(CreateEntryActivity.this, title, message);
+    public void displayInvalidSubmissionAlert(String title, String message, final int error) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateEntryActivity.this);
+        builder1.setTitle(title);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        if (error == 0) {
+                            onPersonSelected(pendingPerson, currentPersonDialogTitle);
+                        }
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 
 }

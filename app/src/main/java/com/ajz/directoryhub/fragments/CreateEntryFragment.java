@@ -4,15 +4,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
@@ -30,8 +34,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.R.id.message;
-
 /**
  * Created by adamzarn on 11/1/17.
  */
@@ -40,7 +42,7 @@ public class CreateEntryFragment extends Fragment {
 
     ClickListener mCallback;
     private Entry entryToEdit;
-    private ArrayList<Person> newPeople;
+    private ArrayAdapter<String> stateAdapter;
 
     @BindView(R.id.people_linear_layout)
     LinearLayout peopleLinearLayout;
@@ -72,8 +74,8 @@ public class CreateEntryFragment extends Fragment {
     @BindView(R.id.city_edit_text)
     EditText cityEditText;
 
-    @BindView(R.id.state_edit_text)
-    EditText stateEditText;
+    @BindView(R.id.state_spinner)
+    Spinner stateSpinner;
 
     @BindView(R.id.zip_edit_text)
     EditText zipEditText;
@@ -95,9 +97,6 @@ public class CreateEntryFragment extends Fragment {
     @OnClick(R.id.submit_create_entry_button)
     public void submitButtonClicked() {
 
-        submitCreateEntryProgressBar.bringToFront();
-        submitCreateEntryProgressBar.setVisibility(View.VISIBLE);
-
         String lastName = lastNameEditText.getText().toString();
         String phone = entryPhoneEditText.getText().toString();
         String email = entryEmailEditText.getText().toString();
@@ -105,28 +104,51 @@ public class CreateEntryFragment extends Fragment {
         String line2 = entryLine2EditText.getText().toString();
         String line3 = entryLine3EditText.getText().toString();
         String city = cityEditText.getText().toString();
-        String state = stateEditText.getText().toString();
+        String state = stateSpinner.getSelectedItem().toString();
         String zip = zipEditText.getText().toString();
         CustomAddress address = new CustomAddress(street, line2, line3, city, state, zip);
 
-        if (entryToEdit != null) {
-            entryToEdit.setName(lastName);
-            entryToEdit.setPhone(phone);
-            entryToEdit.setEmail(email);
-            entryToEdit.setAddress(address);
-            entryToEdit.setPeople(newPeople);
-            mCallback.submitButtonClicked(entryToEdit);
-        } else {
-            Entry newEntry = new Entry(null, lastName, phone, email, address, newPeople);
-            mCallback.submitButtonClicked(newEntry);
+        if (StringUtils.isMissing(lastName)) {
+            mCallback.displayInvalidSubmissionAlert("Missing Last Name", "A new entry must have a last name.", 1);
+            return;
         }
+
+        if (getAdults(entryToEdit.getPeople()).size() == 0) {
+            mCallback.displayInvalidSubmissionAlert("No Adults", "A new entry must have at least 1 adult.", 1);
+            return;
+        }
+
+        if (phone.length() < 12 && phone.length() > 0) {
+            mCallback.displayInvalidSubmissionAlert("Bad Phone Number", "Phone Numbers must be 12 characters long.", 1);
+            return;
+        }
+
+        if (getAdults(entryToEdit.getPeople()).size() == 1) {
+            if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(),"Husband")) {
+                mCallback.displayInvalidSubmissionAlert("Missing Spouse", "A husband must have a wife.", 1);
+                return;
+            } else if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(),"Wife")) {
+                mCallback.displayInvalidSubmissionAlert("Missing Spouse", "A wife must have a husband.", 1);
+                return;
+            }
+        }
+
+        submitCreateEntryProgressBar.bringToFront();
+        submitCreateEntryProgressBar.setVisibility(View.VISIBLE);
+
+        entryToEdit.setName(lastName);
+        entryToEdit.setPhone(phone);
+        entryToEdit.setEmail(email);
+        entryToEdit.setAddress(address);
+        mCallback.submitButtonClicked(entryToEdit);
+
     }
 
     public interface ClickListener {
         void onFocusChange(View view);
         void onPersonSelected(Person selectedPerson, String title);
         void submitButtonClicked(Entry entry);
-        void displayInvalidPersonAlert(String title, String message);
+        void displayInvalidSubmissionAlert(String title, String message, int error);
     }
 
     public CreateEntryFragment() {
@@ -148,20 +170,83 @@ public class CreateEntryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.create_entry_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
+        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+                "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"));
+        stateAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, stateArray) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = convertView;
+                if (v == null) {
+                    Context mContext = this.getContext();
+                    LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    v = vi.inflate(R.layout.dropdown_row, null);
+                }
+                TextView tv = (TextView) v.findViewById(R.id.spinnerTarget);
+                tv.setText(stateArray.get(position));
+                return v;
+            }
+        };
+        stateSpinner.setAdapter(stateAdapter);
+
         if (getArguments().getParcelable("entryToEdit") != null) {
             entryToEdit = getArguments().getParcelable("entryToEdit");
-            newPeople = entryToEdit.getPeople();
             populateInfo();
             populatePeople();
             createEntryButton.setText("SUBMIT CHANGES");
         } else {
+            entryToEdit = new Entry(null, null, null, null, null, null);
             createEntryButton.setText("SUBMIT");
         }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(
                 Arrays.asList(lastNameEditText, entryPhoneEditText, entryEmailEditText,
                         entryStreetEditText, entryLine2EditText, entryLine3EditText,
-                        cityEditText, stateEditText, zipEditText));
+                        cityEditText, zipEditText));
+
+        entryPhoneEditText.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+
+            private boolean backspacingFlag = false;
+            private boolean editedFlag = false;
+            private int cursorComplement;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                cursorComplement = s.length()-entryPhoneEditText.getSelectionStart();
+                if (count > after) {
+                    backspacingFlag = true;
+                } else {
+                    backspacingFlag = false;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                String phone = string.replaceAll("[^\\d]", "");
+
+                if (!editedFlag) {
+
+                    if (phone.length() >= 6 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = phone.substring(0, 3) + "-" + phone.substring(3,6) + "-" + phone.substring(6);
+                        entryPhoneEditText.setText(ans);
+                        entryPhoneEditText.setSelection(entryPhoneEditText.getText().length()-cursorComplement);
+                    } else if (phone.length() >= 3 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = phone.substring(0, 3) + "-" + phone.substring(3);
+                        entryPhoneEditText.setText(ans);
+                        entryPhoneEditText.setSelection(entryPhoneEditText.getText().length()-cursorComplement);
+                    }
+
+                } else {
+                    editedFlag = false;
+                }
+            }
+        });
 
         for (EditText editText : editTexts) {
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -197,7 +282,7 @@ public class CreateEntryFragment extends Fragment {
         entryLine2EditText.setText(address.getLine2());
         entryLine3EditText.setText(address.getLine3());
         cityEditText.setText(address.getCity());
-        stateEditText.setText(address.getState());
+        stateSpinner.setSelection(stateAdapter.getPosition(entryToEdit.getAddress().getState()));
         zipEditText.setText(address.getZip());
     }
 
@@ -206,13 +291,22 @@ public class CreateEntryFragment extends Fragment {
         ArrayList<Person> adults = new ArrayList<>();
         ArrayList<Person> children = new ArrayList<>();
 
-        for (Person person : entryToEdit.getPeople()) {
-            if (!TextUtils.equals(person.getType(), "Child")) {
-                adults.add(person);
-            } else {
-                children.add(person);
+        if (entryToEdit.getPeople() != null) {
+            for (Person person : entryToEdit.getPeople()) {
+                if (!TextUtils.equals(person.getType(), "Child")) {
+                    adults.add(person);
+                } else {
+                    children.add(person);
+                }
             }
         }
+
+        Collections.sort(adults, new Comparator<Person>() {
+            @Override
+            public int compare(Person p1, Person p2) {
+                return p1.getType().compareTo(p2.getType());
+            }
+        });
 
         Collections.sort(children, new Comparator<Person>() {
             @Override public int compare(Person p1, Person p2) {
@@ -250,7 +344,21 @@ public class CreateEntryFragment extends Fragment {
 
         TextView nameTextView = new TextView(getActivity());
         formatTextView(nameTextView);
-        nameTextView.setText(person.getName() + ", " + person.getType());
+
+        if (!TextUtils.equals(person.getType(),"Child")) {
+            nameTextView.setText(person.getName() + ", " + person.getType());
+        } else {
+            String birthOrderString = "st child";
+            if (person.getBirthOrder() == 2) {
+                birthOrderString = "nd child";
+            } else if (person.getBirthOrder() == 3) {
+                birthOrderString = "rd child";
+            } else if (person.getBirthOrder() > 3) {
+                birthOrderString = "th child";
+            }
+            nameTextView.setText(person.getName() + ", " + person.getBirthOrder() + birthOrderString);
+        }
+
         clickablePersonLinearLayout.addView(nameTextView);
 
         if (!TextUtils.equals(person.getPhone(),"")) {
@@ -301,76 +409,77 @@ public class CreateEntryFragment extends Fragment {
 
     public void updatePeople(Person newPerson) {
 
-        System.out.println("Here");
-
         if (!validateNewPerson(newPerson)) {
-            System.out.println("Not Validated");
             return;
-        } else {
-            System.out.println("Validated");
         }
 
-        ArrayList<Person> people = entryToEdit.getPeople();
+        ArrayList<Person> people = new ArrayList<Person>();
         Boolean notFound = true;
-        for (Person person : people) {
-            if (TextUtils.equals(person.getUid(),newPerson.getUid())) {
-                people.set(people.indexOf(person), newPerson);
-                notFound = false;
+        if (entryToEdit.getPeople() != null) {
+            people = entryToEdit.getPeople();
+            for (Person person : people) {
+                if (TextUtils.equals(person.getUid(), newPerson.getUid())) {
+                    people.set(people.indexOf(person), newPerson);
+                    notFound = false;
+                }
             }
         }
+
         if (notFound) {
             people.add(newPerson);
         }
-        newPeople = people;
+
+        entryToEdit.setPeople(people);
         populatePeople();
+
     }
 
     private Boolean validateNewPerson(Person newPerson) {
 
         if (StringUtils.isMissing(newPerson.getName())) {
-            mCallback.displayInvalidPersonAlert("No Name", "You must enter a first name.");
+            mCallback.displayInvalidSubmissionAlert("No Name", "You must enter a first name.", 0);
             return false;
         }
 
         if (StringUtils.isMissing(newPerson.getType())) {
-            mCallback.displayInvalidPersonAlert("No Type", "Each person must have a type.");
-            return false;
-        }
-
-        if (newPerson.getPhone().length() < 12 && newPerson.getPhone().length() > 0) {
-            mCallback.displayInvalidPersonAlert("Bad Phone Number", "Phone Number must be 12 characters long.");
+            mCallback.displayInvalidSubmissionAlert("No Type", "Each person must have a type.", 0);
             return false;
         }
 
         if (TextUtils.equals(newPerson.getType(),"Child") && newPerson.getBirthOrder() == 0) {
-            mCallback.displayInvalidPersonAlert("Missing Birth Order", "Children must have a birth order.");
+            mCallback.displayInvalidSubmissionAlert("Missing Birth Order", "Children must have a birth order.", 0);
+            return false;
+        }
+
+        if (newPerson.getPhone().length() < 12 && newPerson.getPhone().length() > 0) {
+            mCallback.displayInvalidSubmissionAlert("Bad Phone Number", "Phone Numbers must be 12 characters long.", 0);
             return false;
         }
 
         if (!TextUtils.equals(newPerson.getType(),"Child")) {
             if (getOtherPersonTypes(newPerson).contains(newPerson.getType())) {
-                mCallback.displayInvalidPersonAlert("Duplicate Person Type", "Entries can only contain one " + newPerson.getType() + ".");
+                mCallback.displayInvalidSubmissionAlert("Duplicate Person Type", "Entries can only contain one " + newPerson.getType() + ".", 0);
                 return false;
             }
         }
 
         if (TextUtils.equals(newPerson.getType(), "Husband") || TextUtils.equals(newPerson.getType(), "Wife")) {
             if (getOtherPersonTypes(newPerson).contains("Single")) {
-                mCallback.displayInvalidPersonAlert("Error", "Married couples and adult Singles cannot be in the same entry.");
+                mCallback.displayInvalidSubmissionAlert("Error", "Married couples and adult Singles cannot be in the same entry.", 0);
                 return false;
             }
         }
 
         if (TextUtils.equals(newPerson.getType(),"Single")) {
             if (getOtherPersonTypes(newPerson).contains("Husband") || getOtherPersonTypes(newPerson).contains("Wife")) {
-                mCallback.displayInvalidPersonAlert("Error", "Married couples and adult Singles cannot be in the same entry.");
+                mCallback.displayInvalidSubmissionAlert("Error", "Married couples and adult Singles cannot be in the same entry.", 0);
                 return false;
             }
         }
 
         if (newPerson.getBirthOrder() != 0) {
             if (getOtherBirthOrders(newPerson).contains(newPerson.getBirthOrder())) {
-                mCallback.displayInvalidPersonAlert("Bad Birth Order", "Birth Order must be unique.");
+                mCallback.displayInvalidSubmissionAlert("Bad Birth Order", "Birth Order must be unique.", 0);
                 return false;
             }
         }
@@ -381,10 +490,10 @@ public class CreateEntryFragment extends Fragment {
 
     private ArrayList<String> getOtherPersonTypes(Person newPerson) {
         ArrayList<String> personTypes = new ArrayList<>();
-        if (newPeople == null) {
+        if (entryToEdit.getPeople() == null) {
             return personTypes;
         } else {
-            for (Person person : newPeople) {
+            for (Person person : entryToEdit.getPeople()) {
                 if (!TextUtils.equals(person.getUid(), newPerson.getUid())) {
                     personTypes.add(person.getType());
                 }
@@ -395,16 +504,40 @@ public class CreateEntryFragment extends Fragment {
 
     private ArrayList<Integer> getOtherBirthOrders(Person newPerson) {
         ArrayList<Integer> birthOrders = new ArrayList<>();
-        if (newPeople == null) {
+        if (entryToEdit.getPeople() == null) {
             return birthOrders;
         } else {
-            for (Person person : newPeople) {
+            for (Person person : entryToEdit.getPeople()) {
                 if (!TextUtils.equals(person.getUid(), newPerson.getUid())) {
                     birthOrders.add(person.getBirthOrder());
                 }
             }
             return birthOrders;
         }
+    }
+
+    private ArrayList<Person> getAdults(ArrayList<Person> people) {
+        ArrayList<Person> adults = new ArrayList<>();
+        if (people != null) {
+            for (Person person : people) {
+                if (!TextUtils.equals(person.getType(), "Child")) {
+                    adults.add(person);
+                }
+            }
+        }
+        return adults;
+    }
+
+    private ArrayList<Person> getChildren(ArrayList<Person> people) {
+        ArrayList<Person> children = new ArrayList<>();
+        if (people != null) {
+            for (Person person : people) {
+                if (TextUtils.equals(person.getType(), "Child")) {
+                    children.add(person);
+                }
+            }
+        }
+        return children;
     }
 
 

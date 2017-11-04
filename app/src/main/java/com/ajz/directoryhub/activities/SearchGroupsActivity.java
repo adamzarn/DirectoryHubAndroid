@@ -60,7 +60,7 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
                     ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
                     currentUserGroups.add(selectedGroup.getUid());
-                    new FirebaseClient().updateUserGroups(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups);
+                    new FirebaseClient().joinGroup(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups, "users");
                 } else {
                     Toast.makeText(getApplicationContext(),"Incorrect Password",Toast.LENGTH_LONG).show();
                 }
