@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.ajz.directoryhub.DialogUtils;
+import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.MyGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
@@ -66,6 +67,35 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
         Intent editGroupIntent = new Intent(getApplicationContext(), editGroup);
         editGroupIntent.putExtra("groupToEdit", groupToEdit);
         startActivity(editGroupIntent);
+    }
+
+    @Override
+    public void onGroupToDeleteSelected(final Group groupToDelete) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MyGroupsActivity.this);
+        builder1.setTitle("Delete Group");
+        builder1.setMessage("This will only remove \"" + groupToDelete.getName() + "\" from \"My Groups\". You will be able to add it back again later. Continue?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String groupUid = groupToDelete.getUid();
+                        groupUids.remove(groupUid);
+                        new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, groupUids);
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 
     @Override

@@ -176,6 +176,15 @@
                 tools:text="Manage Administrators"
                 android:text="@string/manage_administrators_button_text"/>
 
+            <Button
+                android:id="@+id/delete_group_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#d11a2a"
+                android:textColor="#fff"
+                tools:text="Delete Group"
+                android:text="@string/delete_group_button_text"/>
+
         </LinearLayout>
 
     </ScrollView>

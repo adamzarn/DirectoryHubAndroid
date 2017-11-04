@@ -62,6 +62,17 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         String createdByString = "Created by: " + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
 
+        holder.deleteGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searching) {
+                    clickListener.onDeleteGroupClick(filteredGroups.get(position));
+                } else {
+                    clickListener.onDeleteGroupClick(groups.get(position));
+                }
+            }
+        });
+
         holder.editGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,6 +128,9 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         @BindView(R.id.created_by_text_view)
         TextView createdByTextView;
 
+        @BindView(R.id.delete_group_button)
+        Button deleteGroupButton;
+
         @BindView(R.id.edit_group_button)
         Button editGroupButton;
 
@@ -143,6 +157,7 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
     public interface OnGroupClickListener {
         void onGroupClick(Group selectedGroup);
         void onEditGroupClick(Group groupToEdit);
+        void onDeleteGroupClick(Group groupToDelete);
     }
 
     public void setOnGroupClickListener(final OnGroupClickListener groupClickListener) {

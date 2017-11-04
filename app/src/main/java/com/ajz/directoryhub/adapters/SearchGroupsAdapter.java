@@ -47,6 +47,9 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
         @BindView(R.id.created_by_text_view)
         TextView createdByTextView;
 
+        @BindView(R.id.delete_group_button)
+        Button deleteGroupButton;
+
         @BindView(R.id.edit_group_button)
         Button editGroupButton;
 
@@ -77,6 +80,7 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
         holder.cityStateTextView.setText(group.getCity() + ", " + group.getState());
         String createdByString = "Created by: " + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
+        holder.deleteGroupButton.setVisibility(View.GONE);
         holder.editGroupButton.setVisibility(View.GONE);
 
         holder.groupLogoImageView.setImageBitmap(null);

@@ -58,13 +58,43 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/edit_group_button"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:background="@android:drawable/ic_dialog_info"
-                android:backgroundTint="@color/lightGray"/>
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="30dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" >
+
+                    <Button
+                        android:id="@+id/delete_group_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:drawable/ic_delete"
+                        android:backgroundTint="@color/lightGray"
+                        android:gravity="center_vertical" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="30dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" >
+
+                    <Button
+                        android:id="@+id/edit_group_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:drawable/ic_dialog_info"
+                        android:backgroundTint="@color/lightGray"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

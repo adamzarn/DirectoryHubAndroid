@@ -36,6 +36,7 @@
     <string name="upload_photo_button_text">UPLOAD PHOTO</string>
     <string name="remove_photo_button_text">REMOVE PHOTO</string>
     <string name="manage_administrators_button_text">MANAGE ADMINISTRATORS</string>
+    <string name="delete_group_button_text">DELETE GROUP</string>
     <string name="submit_item_text">SUBMIT</string>
 
     <string name="entry_last_name_label_text">LAST NAME</string>

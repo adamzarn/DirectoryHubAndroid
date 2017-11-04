@@ -85,6 +85,15 @@ public class CreateGroupFragment extends Fragment {
 
     @OnClick(R.id.manage_administrators_button)
     public void manageAdministrators() {
+        mCallback.manageAdministratorsButtonClicked(groupToEdit);
+    }
+
+    @BindView(R.id.delete_group_button)
+    Button deleteGroupButton;
+
+    @OnClick(R.id.delete_group_button)
+    public void deleteGroup() {
+        mCallback.deleteGroup(groupToEdit);
     }
 
     @BindView(R.id.submit_create_group_button)
@@ -115,6 +124,7 @@ public class CreateGroupFragment extends Fragment {
         void onFocusChange(View view);
         void pickImage();
         void manageAdministratorsButtonClicked(Group groupBeingEdited);
+        void deleteGroup(Group groupToDelete);
     }
 
     public CreateGroupFragment() {
@@ -161,6 +171,7 @@ public class CreateGroupFragment extends Fragment {
             groupUids = getArguments().getStringArrayList("groupUids");
             submitCreateGroupButton.setText("SUBMIT");
             manageAdministratorsButton.setVisibility(View.GONE);
+            deleteGroupButton.setVisibility(View.GONE);
         }
 
         if (getArguments().getParcelable("groupToEdit") != null) {
@@ -186,12 +197,6 @@ public class CreateGroupFragment extends Fragment {
             });
 
             manageAdministratorsButton.setVisibility(View.VISIBLE);
-            manageAdministratorsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mCallback.manageAdministratorsButtonClicked(groupToEdit);
-                }
-            });
             submitCreateGroupButton.setText("SUBMIT CHANGES");
         }
 

@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +20,6 @@ import com.ajz.directoryhub.activities.MyGroupsActivity;
 import com.ajz.directoryhub.adapters.MyGroupsAdapter;
 import com.ajz.directoryhub.objects.Group;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,6 +61,7 @@ public class MyGroupsFragment extends Fragment {
     public interface OnGroupClickListener {
         void onGroupSelected(Group selectedGroup);
         void onGroupToEditSelected(Group groupToEdit);
+        void onGroupToDeleteSelected(Group groupToDelete);
     }
 
     public interface OnAddGroupFabClickListener {
@@ -90,9 +88,6 @@ public class MyGroupsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         userUid = mAuth.getCurrentUser().getUid();
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(myGroupsRecyclerView);
-
         myGroupsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         myGroupsAdapter = new MyGroupsAdapter();
@@ -107,6 +102,11 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void onEditGroupClick(Group groupToEdit) {
                 mCallback.onGroupToEditSelected(groupToEdit);
+            }
+
+            @Override
+            public void onDeleteGroupClick(Group groupToDelete) {
+                mCallback.onGroupToDeleteSelected(groupToDelete);
             }
         });
 
@@ -137,36 +137,6 @@ public class MyGroupsFragment extends Fragment {
         return rootView;
 
     }
-
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            int position = viewHolder.getAdapterPosition();
-            Group swipedGroup = myGroupsAdapter.getGroup(position);
-            ArrayList<String> admins = swipedGroup.getAdminKeys();
-            if (admins.size() == 1 && admins.contains(mAuth.getCurrentUser().getUid())) {
-                return 0;
-            } else {
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            int position = viewHolder.getAdapterPosition();
-            String groupUid = myGroupsAdapter.getGroup(position).getUid();
-            ArrayList<String> groupUids = ((MyGroupsActivity) getActivity()).getGroupUids();
-            groupUids.remove(groupUid);
-            new FirebaseClient().deleteFromMyGroups((MyGroupsActivity) getActivity(), groupUid, groupUids);
-        }
-
-    };
 
     @Override
     public void onResume() {

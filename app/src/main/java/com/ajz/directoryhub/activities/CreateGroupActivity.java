@@ -1,9 +1,11 @@
 package com.ajz.directoryhub.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -159,6 +161,34 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             editedAdmins = editedGroup.getAdmins();
             editedUsers = editedGroup.getUsers();
         }
+    }
+
+    @Override
+    public void deleteGroup(final Group groupToDelete) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateGroupActivity.this);
+        builder1.setTitle("Delete Group");
+        builder1.setMessage("This will permanently delete this group from the database. Are you sure you want to continue?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new FirebaseClient().deleteGroup(CreateGroupActivity.this, groupToDelete.getUid());
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+
     }
 
 }
