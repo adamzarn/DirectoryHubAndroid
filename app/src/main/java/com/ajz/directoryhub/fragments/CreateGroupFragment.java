@@ -234,4 +234,8 @@ public class CreateGroupFragment extends Fragment {
         createGroupLogo.setImageBitmap(bm);
     }
 
+    public void setGroupToEdit(Group newGroupToEdit) {
+        groupToEdit = newGroupToEdit;
+    }
+
 }

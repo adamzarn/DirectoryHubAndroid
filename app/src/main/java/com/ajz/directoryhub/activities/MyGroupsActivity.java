@@ -71,31 +71,36 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
 
     @Override
     public void onGroupToDeleteSelected(final Group groupToDelete) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(MyGroupsActivity.this);
-        builder1.setTitle("Delete Group");
-        builder1.setMessage("This will only remove \"" + groupToDelete.getName() + "\" from \"My Groups\". You will be able to add it back again later. Continue?");
-        builder1.setCancelable(true);
 
-        builder1.setPositiveButton(
-                "Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String groupUid = groupToDelete.getUid();
-                        groupUids.remove(groupUid);
-                        new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, groupUids);
-                    }
-                });
+        if (groupToDelete.getAdminKeys().size() == 1 && groupToDelete.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
+            DialogUtils.showPositiveAlert(MyGroupsActivity.this, "Cannot Delete", "You are the only administrator for \"" + groupToDelete.getName() + "\", so you cannot delete it.");
+        } else {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(MyGroupsActivity.this);
+            builder1.setTitle("Delete Group");
+            builder1.setMessage("This will only remove \"" + groupToDelete.getName() + "\" from \"My Groups\". You will be able to add it back again later. Continue?");
+            builder1.setCancelable(true);
 
-        builder1.setNegativeButton(
-                "No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+            builder1.setPositiveButton(
+                    "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String groupUid = groupToDelete.getUid();
+                            groupUids.remove(groupUid);
+                            new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, groupUids);
+                        }
+                    });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+            builder1.setNegativeButton(
+                    "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }
     }
 
     @Override

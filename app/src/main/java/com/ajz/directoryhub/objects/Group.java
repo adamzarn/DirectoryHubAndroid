@@ -25,6 +25,9 @@ public class Group implements Parcelable {
     private String lowercasedCreatedBy;
     private String createdByUid;
 
+    public Group() {
+    }
+
     public Group(String uid, String name, String lowercasedName,
                       String city, String state, String password,
                         HashMap<String, Object> admins, HashMap<String, Object> users, String createdBy,

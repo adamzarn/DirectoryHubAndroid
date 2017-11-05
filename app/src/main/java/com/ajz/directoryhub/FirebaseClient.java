@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.ajz.directoryhub.activities.CreateGroupActivity;
+import com.ajz.directoryhub.activities.DirectoryActivity;
 import com.ajz.directoryhub.activities.MyGroupsActivity;
 import com.ajz.directoryhub.adapters.DirectoryAdapter;
 import com.ajz.directoryhub.adapters.MyGroupsAdapter;
@@ -464,6 +465,16 @@ public class FirebaseClient {
                         });
                     }
                 });
+            }
+        });
+    }
+
+    public void deleteEntry(final DirectoryActivity activity, String groupUid, String entryUid) {
+        DatabaseReference directoryRef = mDatabase.child("Directories").child(groupUid).child(entryUid);
+        directoryRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                activity.recreate();
             }
         });
     }

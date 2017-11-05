@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.ViewHolder> {
 
     private Boolean searching;
+    private Boolean isAdmin;
 
     private ArrayList<Entry> entries = new ArrayList<>();
     private ArrayList<Entry> filteredEntries = new ArrayList<>();
@@ -37,7 +39,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
         Entry entry;
 
@@ -98,6 +100,22 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             holder.childrenTextView.setVisibility(View.GONE);
         }
 
+        if (!isAdmin) {
+            holder.deleteEntryButton.setVisibility(View.GONE);
+        } else {
+            holder.deleteEntryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (searching) {
+                        clickListener.deleteEntryClick(filteredEntries.get(position));
+                    } else {
+                        clickListener.deleteEntryClick(entries.get(position));
+                    }
+
+                }
+            });
+        }
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -126,6 +144,9 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         @BindView(R.id.directory_children_text_view)
         TextView childrenTextView;
 
+        @BindView(R.id.delete_entry_button)
+        Button deleteEntryButton;
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -144,6 +165,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     public interface OnEntryClickListener {
         void onEntryClick(Entry selectedEntry);
+        void deleteEntryClick(Entry entryToDelete);
     }
 
     public void setOnEntryClickListener(final OnEntryClickListener entryClickListener) {
@@ -152,6 +174,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     public void setSearching(Boolean searching) {
         this.searching = searching;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public void setData(ArrayList<Entry> receivedEntries) {

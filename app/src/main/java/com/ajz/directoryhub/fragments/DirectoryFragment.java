@@ -55,6 +55,7 @@ public class DirectoryFragment extends Fragment {
 
     public interface OnEntryClickListener {
         void onEntrySelected(Entry selectedEntry);
+        void onDeleteEntryClicked(Entry entryToDelete);
         void onAddEntrySelected();
     }
 
@@ -79,6 +80,7 @@ public class DirectoryFragment extends Fragment {
         directoryAdapter = new DirectoryAdapter();
         directoryRecyclerView.setAdapter(directoryAdapter);
         directoryAdapter.setSearching(false);
+        directoryAdapter.setIsAdmin(getArguments().getBoolean("isAdmin"));
 
         directoryAdapter.setOnEntryClickListener(new DirectoryAdapter.OnEntryClickListener() {
             @Override
@@ -86,6 +88,10 @@ public class DirectoryFragment extends Fragment {
                 mCallback.onEntrySelected(selectedEntry);
             }
 
+            @Override
+            public void deleteEntryClick(Entry entryToDelete) {
+                mCallback.onDeleteEntryClicked(entryToDelete);
+            }
         });
 
         directorySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

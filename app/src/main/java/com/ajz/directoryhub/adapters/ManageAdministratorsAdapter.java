@@ -11,6 +11,8 @@ import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.objects.Member;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,11 +121,25 @@ public class ManageAdministratorsAdapter extends RecyclerView.Adapter<ManageAdmi
                 members.add(createMember(entry, true));
                 adminCount++;
             }
+            Collections.sort(members, new Comparator<Member>() {
+                @Override public int compare(Member m1, Member m2) {
+                    return m1.getName().compareTo(m2.getName());
+                }
+            });
         }
 
         if (users != null) {
+            ArrayList<Member> unsortedUsers = new ArrayList<>();
             for (Map.Entry<String, Object> entry : users.entrySet()) {
-                members.add(createMember(entry, false));
+                unsortedUsers.add(createMember(entry, false));
+            }
+            Collections.sort(unsortedUsers, new Comparator<Member>() {
+                @Override public int compare(Member m1, Member m2) {
+                    return m1.getName().compareTo(m2.getName());
+                }
+            });
+            for (Member member : unsortedUsers) {
+                members.add(member);
             }
         }
 

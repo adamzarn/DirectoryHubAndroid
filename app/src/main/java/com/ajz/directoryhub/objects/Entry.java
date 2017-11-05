@@ -24,6 +24,9 @@ public class Entry implements Parcelable {
     private CustomAddress address;
     private ArrayList<Person> people;
 
+    public Entry() {
+    }
+
     public Entry(String uid, String name, String phone, String email, CustomAddress address, ArrayList<Person> people) {
         this.uid = uid;
         this.name = name;

@@ -194,7 +194,7 @@ public class CreateEntryFragment extends Fragment {
             populatePeople();
             createEntryButton.setText("SUBMIT CHANGES");
         } else {
-            entryToEdit = new Entry(null, null, null, null, null, null);
+            entryToEdit = new Entry();
             createEntryButton.setText("SUBMIT");
         }
 

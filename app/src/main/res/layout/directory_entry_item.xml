@@ -7,77 +7,107 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/directory_item_linear_layout"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_sm"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/margin_sm" >
 
-        <TextView
-            android:id="@+id/header_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="@dimen/margin_xs"
-            android:textSize="@dimen/font_sm"
-            android:textStyle="bold"
-            tools:text="Doe, John &amp; Jane" />
 
-        <TextView
-            android:id="@+id/directory_phone_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="555-555-5555" />
+        <LinearLayout
+            android:id="@+id/directory_item_linear_layout"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/directory_email_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="abc@gmail.com" />
+            <TextView
+                android:id="@+id/header_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:textSize="@dimen/font_sm"
+                android:textStyle="bold"
+                tools:text="Doe, John &amp; Jane" />
 
-        <TextView
-            android:id="@+id/directory_line2_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="Line 2" />
+            <TextView
+                android:id="@+id/directory_phone_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="555-555-5555" />
 
-        <TextView
-            android:id="@+id/directory_line3_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="Line 3" />
+            <TextView
+                android:id="@+id/directory_email_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="abc@gmail.com" />
 
-        <TextView
-            android:id="@+id/directory_street_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="Street" />
+            <TextView
+                android:id="@+id/directory_line2_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="Line 2" />
 
-        <TextView
-            android:id="@+id/directory_city_state_zip_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="City, State Zip" />
+            <TextView
+                android:id="@+id/directory_line3_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="Line 3" />
 
-        <TextView
-            android:id="@+id/directory_children_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/font_sm"
-            tools:text="Children" />
+            <TextView
+                android:id="@+id/directory_street_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="Street" />
+
+            <TextView
+                android:id="@+id/directory_city_state_zip_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="City, State Zip" />
+
+            <TextView
+                android:id="@+id/directory_children_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_sm"
+                tools:text="Children" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="30dp"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="30dp"
+                android:layout_height="match_parent" >
+
+                <Button
+                    android:id="@+id/delete_entry_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_delete"
+                    android:backgroundTint="@color/lightGray"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

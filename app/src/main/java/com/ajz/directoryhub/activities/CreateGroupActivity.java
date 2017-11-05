@@ -50,6 +50,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
 
         if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
             getSupportActionBar().setTitle("Create Group");
+            groupToEdit = new Group();
         } else {
             getSupportActionBar().setTitle("Edit Group");
             groupToEdit = getIntent().getExtras().getParcelable("groupToEdit");
@@ -160,6 +161,9 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             Group editedGroup = data.getExtras().getParcelable("editedGroup");
             editedAdmins = editedGroup.getAdmins();
             editedUsers = editedGroup.getUsers();
+            groupToEdit.setAdmins(editedAdmins);
+            groupToEdit.setUsers(editedUsers);
+            createGroupFragment.setGroupToEdit(groupToEdit);
         }
     }
 

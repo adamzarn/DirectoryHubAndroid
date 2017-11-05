@@ -1,10 +1,13 @@
 package com.ajz.directoryhub.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.DirectoryFragment;
 import com.ajz.directoryhub.objects.Entry;
@@ -50,6 +53,33 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         entryIntent.putExtra("entryUid", selectedEntry.getUid());
         entryIntent.putExtra("isAdmin", getIntent().getExtras().getBoolean("isAdmin"));
         startActivity(entryIntent);
+    }
+
+    @Override
+    public void onDeleteEntryClicked(final Entry entryToDelete) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(DirectoryActivity.this);
+        builder1.setTitle("Delete Entry");
+        builder1.setMessage("Are you sure you want to continue?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new FirebaseClient().deleteEntry(DirectoryActivity.this, groupUid, entryToDelete.getUid());
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 
     @Override
