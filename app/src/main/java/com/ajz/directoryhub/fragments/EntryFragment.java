@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -25,6 +26,8 @@ import com.ajz.directoryhub.objects.Entry;
 import com.ajz.directoryhub.objects.Person;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +41,7 @@ public class EntryFragment extends Fragment {
 
     private Entry currentEntry;
     private Bundle args;
+    private ViewGroup parent;
 
     @BindView(R.id.entry_scroll_view)
     ScrollView entryScrollView;
@@ -129,6 +133,7 @@ public class EntryFragment extends Fragment {
 
     public interface OnEditEntryClickListener {
         void onEditEntry(Entry entryToEdit);
+        void presentContactOptions(Person person, String lastName);
     }
 
     @Override
@@ -145,6 +150,7 @@ public class EntryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.entry_fragment, container, false);
+        parent = container;
         ButterKnife.bind(this, rootView);
 
         args = getArguments();
@@ -268,18 +274,26 @@ public class EntryFragment extends Fragment {
             }
         }
 
+        Collections.sort(adults, new Comparator<Person>() {
+            @Override
+            public int compare(Person p1, Person p2) {
+                return p1.getType().compareTo(p2.getType());
+            }
+        });
+
+        Collections.sort(children, new Comparator<Person>() {
+            @Override public int compare(Person p1, Person p2) {
+                return p1.getBirthOrder() - p2.getBirthOrder();
+            }
+        });
+
         int adultCount = contactInfoLinearLayout.getChildCount() - 1;
         for (int i = adultCount; i > 0; i--) {
             contactInfoLinearLayout.removeViewAt(i);
         }
         for (Person adult : adults) {
             addPersonTextViews(contactInfoLinearLayout, adult);
-
-            View separatorView = new View(getActivity());
-            separatorView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 4));
-            separatorView.setBackgroundColor(getResources().getColor(R.color.lightGray, getActivity().getTheme()));
-            contactInfoLinearLayout.addView(separatorView);
-
+            addSeparator(contactInfoLinearLayout);
         }
 
         int childCount = childrenLinearLayout.getChildCount() - 1;
@@ -292,12 +306,7 @@ public class EntryFragment extends Fragment {
             childrenHeaderTextView.setVisibility(View.VISIBLE);
             for (Person child : children) {
                 addPersonTextViews(childrenLinearLayout, child);
-
-                View childrenSeparatorView = new View(getActivity());
-                childrenSeparatorView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 4));
-                childrenSeparatorView.setBackgroundColor(getResources().getColor(R.color.lightGray, getActivity().getTheme()));
-                childrenLinearLayout.addView(childrenSeparatorView);
-
+                addSeparator(childrenLinearLayout);
             }
         }
 
@@ -305,51 +314,56 @@ public class EntryFragment extends Fragment {
 
     public void addPersonTextViews(LinearLayout ll,final Person person) {
 
-        LinearLayout clickablePersonLinearLayout = new LinearLayout(getActivity());
-        clickablePersonLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        View personView = LayoutInflater.from(getContext()).inflate(R.layout.person_view, parent, false);
 
-        TextView nameTextView = new TextView(getActivity());
-        formatTextView(nameTextView);
-        nameTextView.setText(person.getName());
-        clickablePersonLinearLayout.addView(nameTextView);
+        TextView nameTextView = (TextView) personView.findViewById(R.id.name_text_view);
+        TextView phoneTextView = (TextView) personView.findViewById(R.id.phone_text_view);
+        TextView emailTextView = (TextView) personView.findViewById(R.id.email_text_view);
+        LinearLayout deleteButtonLinearLayout = (LinearLayout) personView.findViewById(R.id.delete_button_linear_layout);
+        deleteButtonLinearLayout.setVisibility(View.GONE);
+
+        if (!TextUtils.equals(person.getType(),"Child")) {
+            nameTextView.setText(person.getName() + ", " + person.getType());
+        } else {
+            String birthOrderString = "st child";
+            if (person.getBirthOrder() == 2) {
+                birthOrderString = "nd child";
+            } else if (person.getBirthOrder() == 3) {
+                birthOrderString = "rd child";
+            } else if (person.getBirthOrder() > 3) {
+                birthOrderString = "th child";
+            }
+            nameTextView.setText(person.getName() + ", " + person.getBirthOrder() + birthOrderString);
+        }
 
         if (!TextUtils.equals(person.getPhone(),"")) {
-            TextView phoneTextView = new TextView(getActivity());
-            formatTextView(phoneTextView);
-            phoneTextView.setText(person.getPhone());
-            clickablePersonLinearLayout.addView(phoneTextView);
+            phoneTextView.setText("Phone: " + person.getPhone());
+        } else {
+            phoneTextView.setVisibility(View.GONE);
         }
 
         if (!TextUtils.equals(person.getEmail(),"")) {
-            TextView emailTextView = new TextView(getActivity());
-            formatTextView(emailTextView);
-            emailTextView.setText(person.getEmail());
-            clickablePersonLinearLayout.addView(emailTextView);
+            emailTextView.setText("Email: " + person.getEmail());
+        } else {
+            emailTextView.setVisibility(View.GONE);
         }
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int lr = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, getResources().getDisplayMetrics());
-        int tb = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-        lp.setMargins(lr, tb, lr, tb);
-        clickablePersonLinearLayout.setLayoutParams(lp);
-
-        clickablePersonLinearLayout.setOnClickListener(new View.OnClickListener() {
+        personView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(),person.getName() + "\n" + person.getPhone() + "\n" + person.getEmail(),Toast.LENGTH_LONG).show();
+                mCallback.presentContactOptions(person, currentEntry.getName());
             }
         });
 
-        ll.addView(clickablePersonLinearLayout);
+        ll.addView(personView);
 
     }
 
-    public void formatTextView(TextView tv) {
-
-        final float scale = getResources().getDisplayMetrics().scaledDensity;
-        int textSize = (int) (getResources().getDimensionPixelSize(R.dimen.font_sm) / scale);
-        tv.setTextSize(textSize);
-
+    public void addSeparator(LinearLayout ll) {
+        View separatorView = new View(getActivity());
+        separatorView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 4));
+        separatorView.setBackgroundColor(getResources().getColor(R.color.lightGray, getActivity().getTheme()));
+        ll.addView(separatorView);
     }
 
 }

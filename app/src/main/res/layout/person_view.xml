@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_sm"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_sm"
+        android:layout_marginRight="@dimen/margin_sm"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/group_item_text_view_height"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/font_sm"
+            tools:text="Name, Type" />
+
+        <TextView
+            android:id="@+id/phone_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/group_item_text_view_height"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/font_sm"
+            tools:text="Phone" />
+
+        <TextView
+            android:id="@+id/email_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/group_item_text_view_height"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/font_sm"
+            tools:text="Email" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/delete_button_linear_layout"
+        android:orientation="vertical"
+        android:layout_width="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/delete_person_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@android:drawable/ic_delete"
+                android:backgroundTint="@color/lightGray"
+                android:gravity="center_vertical" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

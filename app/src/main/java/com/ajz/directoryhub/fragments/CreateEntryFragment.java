@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,8 @@ public class CreateEntryFragment extends Fragment {
     ClickListener mCallback;
     private Entry entryToEdit;
     private ArrayAdapter<String> stateAdapter;
+
+    private ViewGroup parent;
 
     @BindView(R.id.people_linear_layout)
     LinearLayout peopleLinearLayout;
@@ -149,6 +150,7 @@ public class CreateEntryFragment extends Fragment {
         void onPersonSelected(Person selectedPerson, String title);
         void submitButtonClicked(Entry entry);
         void displayInvalidSubmissionAlert(String title, String message, int error);
+        void deletePersonClicked(Person person);
     }
 
     public CreateEntryFragment() {
@@ -168,6 +170,7 @@ public class CreateEntryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.create_entry_fragment, container, false);
+        parent = container;
         ButterKnife.bind(this, rootView);
 
         final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
@@ -320,9 +323,7 @@ public class CreateEntryFragment extends Fragment {
         }
         for (Person adult : adults) {
             addPersonTextViews(adultsLinearLayout, adult);
-            if (adults.indexOf(adult) < adults.size() - 1) {
-                addSeparator(adultsLinearLayout);
-            }
+            addSeparator(adultsLinearLayout);
         }
 
         int childCount = childrenLinearLayout.getChildCount() - 1;
@@ -331,19 +332,18 @@ public class CreateEntryFragment extends Fragment {
         }
         for (Person child : children) {
             addPersonTextViews(childrenLinearLayout, child);
-            if (children.indexOf(child) < children.size() - 1) {
-                addSeparator(childrenLinearLayout);
-            }
+            addSeparator(childrenLinearLayout);
         }
     }
 
     public void addPersonTextViews(LinearLayout ll,final Person person) {
 
-        LinearLayout clickablePersonLinearLayout = new LinearLayout(getActivity());
-        clickablePersonLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        View personView = LayoutInflater.from(getContext()).inflate(R.layout.person_view, parent, false);
 
-        TextView nameTextView = new TextView(getActivity());
-        formatTextView(nameTextView);
+        TextView nameTextView = (TextView) personView.findViewById(R.id.name_text_view);
+        TextView phoneTextView = (TextView) personView.findViewById(R.id.phone_text_view);
+        TextView emailTextView = (TextView) personView.findViewById(R.id.email_text_view);
+        Button deletePersonButton = (Button) personView.findViewById(R.id.delete_person_button);
 
         if (!TextUtils.equals(person.getType(),"Child")) {
             nameTextView.setText(person.getName() + ", " + person.getType());
@@ -359,44 +359,33 @@ public class CreateEntryFragment extends Fragment {
             nameTextView.setText(person.getName() + ", " + person.getBirthOrder() + birthOrderString);
         }
 
-        clickablePersonLinearLayout.addView(nameTextView);
-
         if (!TextUtils.equals(person.getPhone(),"")) {
-            TextView phoneTextView = new TextView(getActivity());
-            formatTextView(phoneTextView);
             phoneTextView.setText("Phone: " + person.getPhone());
-            clickablePersonLinearLayout.addView(phoneTextView);
+        } else {
+            phoneTextView.setVisibility(View.GONE);
         }
 
         if (!TextUtils.equals(person.getEmail(),"")) {
-            TextView emailTextView = new TextView(getActivity());
-            formatTextView(emailTextView);
             emailTextView.setText("Email: " + person.getEmail());
-            clickablePersonLinearLayout.addView(emailTextView);
+        } else {
+            emailTextView.setVisibility(View.GONE);
         }
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int lr = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, getResources().getDisplayMetrics());
-        int tb = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-        lp.setMargins(lr, tb, lr, tb);
-        clickablePersonLinearLayout.setLayoutParams(lp);
+        deletePersonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallback.deletePersonClicked(person);
+            }
+        });
 
-        clickablePersonLinearLayout.setOnClickListener(new View.OnClickListener() {
+        personView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCallback.onPersonSelected(person, "Edit Person");
             }
         });
 
-        ll.addView(clickablePersonLinearLayout);
-
-    }
-
-    public void formatTextView(TextView tv) {
-
-        final float scale = getResources().getDisplayMetrics().scaledDensity;
-        int textSize = (int) (getResources().getDimensionPixelSize(R.dimen.font_sm) / scale);
-        tv.setTextSize(textSize);
+        ll.addView(personView);
 
     }
 
@@ -540,5 +529,21 @@ public class CreateEntryFragment extends Fragment {
         return children;
     }
 
+    public void deletePerson(Person personToDelete) {
+
+        ArrayList<Person> people = entryToEdit.getPeople();
+        int indexToRemove = -1;
+        for (Person person : people) {
+            if (TextUtils.equals(person.getUid(),personToDelete.getUid())) {
+                indexToRemove = people.indexOf(person);
+            }
+        }
+        if (indexToRemove > -1) {
+            people.remove(indexToRemove);
+        }
+
+        entryToEdit.setPeople(people);
+        populatePeople();
+    }
 
 }
