@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -54,23 +55,23 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
 
     @Override
     public void presentContactOptions(final Person person, String lastName) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(EntryActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(EntryActivity.this);
         final String fullName = person.getName() + " " + lastName;
 
-        builder1.setTitle(fullName);
-        builder1.setCancelable(true);
+        builder.setTitle(fullName);
+        builder.setCancelable(true);
 
         LayoutInflater inflater = this.getLayoutInflater();
 
         final View contactPersonView = inflater.inflate(R.layout.contact_person_view, null);
-        builder1.setView(contactPersonView);
+        builder.setView(contactPersonView);
 
         Button callButton = (Button) contactPersonView.findViewById(R.id.call_button);
         Button textButton = (Button) contactPersonView.findViewById(R.id.text_button);
         Button emailButton = (Button) contactPersonView.findViewById(R.id.email_button);
         Button addToContactsButton = (Button) contactPersonView.findViewById(R.id.add_to_contacts_button);
 
-        builder1.setNegativeButton(
+        builder.setNegativeButton(
                 get(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -78,7 +79,14 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                     }
                 });
 
-        final AlertDialog alert11 = builder1.create();
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+            }
+        });
 
         if (StringUtils.isMissing(person.getPhone())) {
             callButton.setVisibility(View.GONE);
@@ -90,7 +98,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("tel:" + person.getPhone()));
                     startActivity(intent);
-                    alert11.dismiss();
+                    alert.dismiss();
                 }
             });
             textButton.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +107,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("sms:" + person.getPhone()));
                     startActivity(intent);
-                    alert11.dismiss();
+                    alert.dismiss();
                 }
             });
         }
@@ -113,7 +121,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
                     intent.setData(Uri.parse("mailto:" + person.getEmail()));
                     startActivity(intent);
-                    alert11.dismiss();
+                    alert.dismiss();
                 }
             });
         }
@@ -128,11 +136,11 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                         .putExtra(ContactsContract.Intents.Insert.PHONE, person.getPhone())
                         .putExtra(ContactsContract.Intents.Insert.EMAIL, person.getEmail());
                 startActivityForResult(contactIntent, 1);
-                alert11.dismiss();
+                alert.dismiss();
             }
         });
 
-        alert11.show();
+        alert.show();
 
     }
 

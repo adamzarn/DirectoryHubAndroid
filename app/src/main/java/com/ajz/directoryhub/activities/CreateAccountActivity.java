@@ -87,7 +87,7 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
                     setDisplayName(user, displayName);
                     new FirebaseClient().addNewUser(displayName);
                 } else {
-                    DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Error", task.getException().getMessage());
+                    DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.error_title), task.getException().getMessage());
                 }
             }
         });
@@ -106,7 +106,7 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
                 if (task.isSuccessful()) {
                     startMyGroups();
                 } else {
-                    DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Error", task.getException().getMessage());
+                    DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.error_title), task.getException().getMessage());
                 }
             }
         });

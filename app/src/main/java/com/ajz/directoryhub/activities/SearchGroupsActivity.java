@@ -3,6 +3,7 @@ package com.ajz.directoryhub.activities;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -47,17 +48,18 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
 
     @Override
     public void onGroupSelected(final Group selectedGroup) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
-        dialogBuilder.setView(dialogView);
+        builder.setView(dialogView);
 
         final EditText groupPasswordEditText = (EditText) dialogView.findViewById(R.id.group_password_edit_text);
 
-        dialogBuilder.setTitle(get(R.string.password_required));
-        dialogBuilder.setMessage(get(R.string.enter_password_prefix) + selectedGroup.getName() + "\"");
-        dialogBuilder.setPositiveButton(get(R.string.submit), new DialogInterface.OnClickListener() {
+        builder.setTitle(get(R.string.password_required));
+        builder.setMessage(get(R.string.enter_password_prefix) + selectedGroup.getName() + "\"");
+
+        builder.setPositiveButton(get(R.string.submit), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
                     ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
@@ -68,13 +70,25 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
                 }
             }
         });
-        dialogBuilder.setNegativeButton(get(R.string.cancel), new DialogInterface.OnClickListener() {
+
+        builder.setNegativeButton(get(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
         });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
+
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                alert.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+            }
+        });
+
+        alert.show();
     }
 
     public String get(int i) {

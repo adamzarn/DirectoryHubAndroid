@@ -26,7 +26,14 @@
     <string name="by_creator_text">By Creator</string>
     <string name="by_unique_id">By Unique ID</string>
 
-    <string name="group_uid_label_text">UNIQUE ID: NOT YET ASSIGNED</string>
+    <string name="share_email_text">You have been invited to join a group on Directory Hub!\n\nDownload the app from Google Play, search for your group using any of the following 3 criteria, then enter
+        the password.</string>
+
+    <string name="group_uid_email_label">UNIQUE ID:\u0020</string>
+    <string name="group_name_email_label">GROUP NAME:\u0020</string>
+    <string name="group_created_by_label">CREATED BY:\u0020</string>
+    <string name="group_password_label">PASSWORD:\u0020</string>
+
     <string name="group_name_label_text">GROUP NAME</string>
     <string name="city_label_text">CITY</string>
     <string name="state_label_text">STATE</string>
@@ -101,7 +108,7 @@
     <string name="no">No</string>
 
     <string name="delete_person_title">Delete Person</string>
-    <string name="delete_person_message_prefix">Are you sure you want to delete </string>
+    <string name="delete_person_message_prefix">Are you sure you want to delete\u0020</string>
 
     <string name="create_group_title">Create Group</string>
     <string name="edit_group_title">Edit Group</string>
@@ -121,25 +128,25 @@
     <string name="password_reset_email_sent_message">Please check your email to reset your password.</string>
 
     <string name="send_password_reset_email_title">Send Password Reset Email</string>
-    <string name="send_password_reset_email_message_prefix">"Send email to </string>
+    <string name="send_password_reset_email_message_prefix">Send email to\u0020</string>
 
     <string name="manage_administrators_title">Manage Administrators</string>
 
     <string name="my_groups_title">My Groups</string>
 
     <string name="cannot_delete_title">Cannot Delete</string>
-    <string name="cannot_delete_message_1">You are the only administrator for "</string>
-    <string name="cannot_delete_message_2">", so you cannot delete it.</string>
+    <string name="cannot_delete_message_1">You are the only administrator for \"</string>
+    <string name="cannot_delete_message_2">\", so you cannot delete it.</string>
 
-    <string name="delete_from_my_groups_message_1">This will only remove "</string>
-    <string name="delete_from_my_groups_message_2">" from "My Groups". You will be able to add it back again later. Continue?</string>
+    <string name="delete_from_my_groups_message_1">This will only remove \"</string>
+    <string name="delete_from_my_groups_message_2">\" from \"My Groups\". You will be able to add it back again later. Continue?</string>
 
     <string name="search_groups_title">Search Groups</string>
     <string name="password_required">Password Required</string>
-    <string name="enter_password_prefix">Enter the password to join the group "</string>
+    <string name="enter_password_prefix">Enter the password to join the group\u0020</string>
     <string name="incorrect_password">Incorrect Password</string>
 
-    <string name="created_by_prefix">Created by: </string>
+    <string name="created_by_prefix">Created by:\u0020</string>
 
     <string name="must_implement_interface">Must implement interface</string>
 
@@ -148,8 +155,8 @@
     <string name="rd_child">rd child</string>
     <string name="th_child">th child</string>
 
-    <string name="phone_prefix">Phone: </string>
-    <string name="email_prefix">Email: </string>
+    <string name="phone_prefix">Phone:\u0020</string>
+    <string name="email_prefix">Email:\u0020</string>
 
     <string name="missing_entry_last_name_title">Missing Last Name</string>
     <string name="missing_entry_last_name_message">A new entry must have a last name.</string>
@@ -175,14 +182,14 @@
     <string name="missing_birth_order_message">Children must have a birth order.</string>
 
     <string name="duplicate_person_type_title">Duplicate Person Type</string>
-    <string name="duplicate_person_type_message">Entries can only contain one </string>
+    <string name="duplicate_person_type_message">Entries can only contain one\u0020</string>
 
     <string name="person_type_conflict_message">Married couples and adult Singles cannot be in the same entry.</string>
 
     <string name="duplicate_birth_order_title">Duplicate Birth Order</string>
     <string name="duplicate_birth_order_message">Birth Order must be unique.</string>
 
-    <string name="unique_id_label">UNIQUE ID: </string>
+    <string name="unique_id_label">UNIQUE ID:\u0020</string>
 
     <string name="call">Call</string>
     <string name="text">Text</string>
@@ -191,5 +198,9 @@
 
     <string name="member">MEMBER</string>
     <string name="admin">ADMIN</string>
+
+    <string name="add_group_title">Add Group</string>
+    <string name="create">Create</string>
+    <string name="search">Search</string>
 
 </resources>

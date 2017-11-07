@@ -2,6 +2,7 @@ package com.ajz.directoryhub;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 /**
@@ -10,23 +11,31 @@ import android.support.v7.app.AlertDialog;
 
 public class DialogUtils {
 
-    public static void showPositiveAlert(Context context, String title, String message) {
+    public static void showPositiveAlert(final Context context, String title, String message) {
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-        builder1.setTitle(title);
-        builder1.setMessage(message);
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
-                "OK",
+        builder.setPositiveButton(
+                context.getResources().getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            }
+        });
+
+        alert.show();
     }
 
 }

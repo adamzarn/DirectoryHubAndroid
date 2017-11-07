@@ -13,11 +13,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
@@ -32,6 +32,8 @@ import java.util.Comparator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.R.attr.offset;
 
 /**
  * Created by adamzarn on 10/24/17.
@@ -178,11 +180,24 @@ public class EntryFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState != null) {
+            final int[] position = savedInstanceState.getIntArray("scroll_view_position");
+            entryScrollView.scrollTo(position[0], position[1] + offset);
+        } else {
+            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    entryScrollView.scrollTo(0, 0);
+                }
+            });
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putIntArray("scroll_view_position",
+                new int[]{entryScrollView.getScrollX(), entryScrollView.getScrollY()});
     }
 
     public void populateFragment(final Entry selectedEntry) {
@@ -234,7 +249,13 @@ public class EntryFragment extends Fragment {
             clickableAddressLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getActivity(),selectedEntry.getAddress().getStreet() + "\n" + selectedEntry.getAddress().getCityStateZip(),Toast.LENGTH_LONG).show();
+                    String addressString = selectedEntry.getAddress().getStreet() + ", " + selectedEntry.getAddress().getCityStateZip();
+                    addressString.replace(" ", "+");
+                    String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=&daddr="+addressString;
+                    Uri gmmIntentUri = Uri.parse(uri);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
                 }
             });
 

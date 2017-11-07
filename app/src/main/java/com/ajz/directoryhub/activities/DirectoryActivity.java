@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -59,12 +60,12 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
 
     @Override
     public void onDeleteEntryClicked(final Entry entryToDelete) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(DirectoryActivity.this);
-        builder1.setTitle(get(R.string.delete_entry_title));
-        builder1.setMessage(get(R.string.delete_entry_message));
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(DirectoryActivity.this);
+        builder.setTitle(get(R.string.delete_entry_title));
+        builder.setMessage(get(R.string.delete_entry_message));
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        builder.setPositiveButton(
                 get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -72,7 +73,7 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
                     }
                 });
 
-        builder1.setNegativeButton(
+        builder.setNegativeButton(
                 get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -80,8 +81,17 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+            }
+        });
+
+        alert.show();
     }
 
     @Override

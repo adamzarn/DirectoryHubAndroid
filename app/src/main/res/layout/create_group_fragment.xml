@@ -21,14 +21,32 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_sm" >
 
-            <TextView
-                android:id="@+id/group_uid_text_view"
+            <RelativeLayout
+                android:id="@+id/group_uid_relative_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:layout_marginBottom="@dimen/margin_sm"
-                android:text="@string/group_uid_label_text"
-                tools:text="UNIQUE ID: NOT YET ASSIGNED"/>
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:layout_marginBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:id="@+id/group_uid_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="@dimen/margin_sm" />
+
+                <Button
+                    android:id="@+id/share_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@android:drawable/ic_menu_share"/>
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/group_name_label"
@@ -133,7 +151,6 @@
                             android:id="@+id/create_group_logo"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/group_logo_height"
-                            android:src="@drawable/image_thumbnail"
                             app:civ_border_color="#FF000000"
                             app:civ_border_width="1dp" />
 

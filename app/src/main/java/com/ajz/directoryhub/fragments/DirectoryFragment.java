@@ -2,6 +2,7 @@ package com.ajz.directoryhub.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,8 @@ import butterknife.OnClick;
  */
 
 public class DirectoryFragment extends Fragment {
+
+    private Parcelable rvState;
 
     @BindView(R.id.directory_recycler_view)
     RecyclerView directoryRecyclerView;
@@ -70,12 +73,21 @@ public class DirectoryFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            rvState = savedInstanceState.getParcelable("rvState");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.directory_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        directoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager llManager = new LinearLayoutManager(getActivity());
+        directoryRecyclerView.setLayoutManager(llManager);
 
         directoryAdapter = new DirectoryAdapter();
         directoryRecyclerView.setAdapter(directoryAdapter);
@@ -121,7 +133,7 @@ public class DirectoryFragment extends Fragment {
         if (!getArguments().getBoolean("isAdmin")) {
             addEntryFab.setVisibility(View.GONE);
         }
-
+        directoryRecyclerView.getLayoutManager().onRestoreInstanceState(rvState);
         return rootView;
 
     }
@@ -130,10 +142,10 @@ public class DirectoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         directoryRecyclerView.setVisibility(View.INVISIBLE);
-        reloadData();
+        loadData();
     }
 
-    public void reloadData() {
+    public void loadData() {
         directoryProgressBar.setVisibility(View.VISIBLE);
         new FirebaseClient().getDirectory(directoryAdapter, getArguments().getString("groupUid"), directoryRecyclerView, directoryProgressBar);
     }
@@ -146,6 +158,7 @@ public class DirectoryFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable("rvState", directoryRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     public String get(int i) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -79,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                 break;
             case R.id.forgot_password_button:
 
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setTitle(get(R.string.send_password_reset_email_title));
-                builder1.setMessage(get(R.string.send_password_reset_email_message_prefix) + email + "?");
-                builder1.setCancelable(true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(get(R.string.send_password_reset_email_title));
+                builder.setMessage(get(R.string.send_password_reset_email_message_prefix) + email + "?");
+                builder.setCancelable(true);
 
-                builder1.setPositiveButton(
+                builder.setPositiveButton(
                         get(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int id) {
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                             }
                         });
 
-                builder1.setNegativeButton(
+                builder.setNegativeButton(
                         get(R.string.no),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -108,8 +109,17 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                             }
                         });
 
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
+                final AlertDialog alert = builder.create();
+
+                alert.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                        alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                    }
+                });
+
+                alert.show();
 
                 break;
         }

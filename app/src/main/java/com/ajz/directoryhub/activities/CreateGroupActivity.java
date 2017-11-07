@@ -3,8 +3,10 @@ package com.ajz.directoryhub.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -39,6 +41,8 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
     private HashMap<String, Object> editedAdmins;
     private HashMap<String, Object> editedUsers;
 
+    private static final String TAG_CREATE_GROUP_FRAGMENT = "createGroupFragment";
+
     private Group groupToEdit;
 
     @Override
@@ -62,13 +66,14 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             editedUsers = groupToEdit.getUsers();
         }
 
-        createGroupFragment = new CreateGroupFragment();
-        createGroupFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        createGroupFragment = (CreateGroupFragment) fragmentManager.findFragmentByTag(TAG_CREATE_GROUP_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (createGroupFragment == null) {
+            createGroupFragment = new CreateGroupFragment();
+            createGroupFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.create_group_activity_container, createGroupFragment)
+                    .add(R.id.create_group_activity_container, createGroupFragment, TAG_CREATE_GROUP_FRAGMENT)
                     .commit();
         }
 
@@ -173,12 +178,12 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
 
     @Override
     public void deleteGroup(final Group groupToDelete) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateGroupActivity.this);
-        builder1.setTitle(get(R.string.delete_group_title));
-        builder1.setMessage(get(R.string.delete_group_message));
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CreateGroupActivity.this);
+        builder.setTitle(get(R.string.delete_group_title));
+        builder.setMessage(get(R.string.delete_group_message));
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        builder.setPositiveButton(
                 get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -186,7 +191,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                     }
                 });
 
-        builder1.setNegativeButton(
+        builder.setNegativeButton(
                 get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -194,9 +199,31 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        final AlertDialog alert = builder.create();
 
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+            }
+        });
+
+        alert.show();
+
+    }
+
+    @Override
+    public void shareGroup(Group groupToShare) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, get(R.string.app_name));
+        intent.putExtra(Intent.EXTRA_TEXT, get(R.string.share_email_text) + "\n\n"
+                + get(R.string.group_name_email_label) + groupToShare.getName() + "\n"
+                + get(R.string.group_created_by_label) + groupToShare.getCreatedBy() + "\n"
+                + get(R.string.group_uid_email_label) + groupToShare.getUid() + "\n\n"
+                + get(R.string.group_password_label) + groupToShare.getPassword());
+        startActivity(intent);
     }
 
     public String get(int i) {

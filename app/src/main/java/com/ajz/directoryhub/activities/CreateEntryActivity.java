@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -276,12 +277,12 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
 
     @Override
     public void displayInvalidSubmissionAlert(String title, String message, final int error) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateEntryActivity.this);
-        builder1.setTitle(title);
-        builder1.setMessage(message);
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CreateEntryActivity.this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        builder.setPositiveButton(
                 (get(R.string.ok)),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -292,18 +293,28 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+            }
+        });
+
+        alert.show();
     }
 
     @Override
     public void deletePersonClicked(final Person person) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateEntryActivity.this);
-        builder1.setTitle(get(R.string.delete_person_title));
-        builder1.setMessage(get(R.string.delete_person_message_prefix) + person.getName() + "?");
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CreateEntryActivity.this);
 
-        builder1.setPositiveButton(
+        builder.setTitle(get(R.string.delete_person_title));
+        builder.setMessage(get(R.string.delete_person_message_prefix) + person.getName() + "?");
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
                 get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -311,7 +322,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                     }
                 });
 
-        builder1.setNegativeButton(
+        builder.setNegativeButton(
                 get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -319,8 +330,17 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        final AlertDialog alert = builder.create();
+
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+                                      @Override
+                                      public void onShow(DialogInterface dialog) {
+                                          alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                                          alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                                      }
+                                  });
+
+        alert.show();
     }
 
     public String get(int i) {

@@ -3,7 +3,6 @@ package com.ajz.directoryhub.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,7 +24,6 @@ import com.ajz.directoryhub.objects.Group;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +42,22 @@ public class CreateGroupFragment extends Fragment {
     private ArrayList<String> groupUids;
     private Group groupToEdit;
     private FirebaseStorage mStorage;
-    private byte[] currentImageData;
+    private byte[] currentImageData = new byte[0];
+    private Boolean imageDownloaded = false;
+
+    @BindView(R.id.group_uid_relative_layout)
+    RelativeLayout groupUidRelativeLayout;
 
     @BindView(R.id.group_uid_text_view)
     TextView groupUidTextView;
+
+    @BindView(R.id.share_button)
+    Button shareButton;
+
+    @OnClick(R.id.share_button)
+    public void shareButtonClicked() {
+        mCallback.shareGroup(groupToEdit);
+    }
 
     @BindView(R.id.group_name_edit_text)
     EditText groupNameEditText;
@@ -125,6 +136,7 @@ public class CreateGroupFragment extends Fragment {
         void pickImage();
         void manageAdministratorsButtonClicked(Group groupBeingEdited);
         void deleteGroup(Group groupToDelete);
+        void shareGroup(Group groupToShare);
     }
 
     public CreateGroupFragment() {
@@ -139,6 +151,12 @@ public class CreateGroupFragment extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(get(R.string.must_implement_interface));
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -165,8 +183,6 @@ public class CreateGroupFragment extends Fragment {
         };
         stateSpinner.setAdapter(stateAdapter);
 
-        currentImageData = new byte[0];
-
         if (getArguments().getStringArrayList("groupUids") != null) {
             groupUids = getArguments().getStringArrayList("groupUids");
             submitCreateGroupButton.setText(get(R.string.submit));
@@ -177,6 +193,7 @@ public class CreateGroupFragment extends Fragment {
         if (getArguments().getParcelable("groupToEdit") != null) {
             groupToEdit = getArguments().getParcelable("groupToEdit");
 
+            groupUidRelativeLayout.setVisibility(View.VISIBLE);
             String groupUidText = get(R.string.unique_id_label) + groupToEdit.getUid();
             groupUidTextView.setText(groupUidText);
             groupNameEditText.setText(groupToEdit.getName());
@@ -184,18 +201,29 @@ public class CreateGroupFragment extends Fragment {
             stateSpinner.setSelection(stateAdapter.getPosition(groupToEdit.getState()));
             passwordEditText.setText(groupToEdit.getPassword());
 
-            mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.with(createGroupLogo.getContext()).load(uri.toString()).into(createGroupLogo);
+            if (currentImageData.length == 0 && !imageDownloaded) {
+                final long ONE_MEGABYTE = 1024 * 1024;
+                mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        currentImageData = bytes;
+                        setImage(currentImageData);
+                        imageDownloaded = true;
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        createGroupLogo.setImageBitmap(null);
+                        currentImageData = new byte[0];
+                    }
+                });
+            } else {
+                if (currentImageData.length == 0) {
+                    createGroupLogo.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.image_thumbnail, null));
+                } else {
+                    setImage(currentImageData);
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    createGroupLogo.setImageBitmap(null);
-                    currentImageData = new byte[0];
-                }
-            });
+            }
 
             manageAdministratorsButton.setVisibility(View.VISIBLE);
             submitCreateGroupButton.setText(get(R.string.submit_changes));
@@ -222,11 +250,6 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     public void setImage(byte[] bytes) {
