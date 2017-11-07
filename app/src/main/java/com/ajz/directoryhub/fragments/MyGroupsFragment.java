@@ -75,7 +75,7 @@ public class MyGroupsFragment extends Fragment {
             mCallback = (OnGroupClickListener) context;
             mAddGroupCallback = (OnAddGroupFabClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListeners");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -159,6 +159,10 @@ public class MyGroupsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 
 }

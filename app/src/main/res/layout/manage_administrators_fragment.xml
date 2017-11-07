@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="MEMBER"
+            android:text="@string/member"
             android:textStyle="bold"
             tools:text="MEMBER"/>
 
@@ -45,7 +45,7 @@
             android:layout_marginRight="@dimen/margin_lg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ADMIN"
+            android:text="@string/admin"
             android:textStyle="bold"
             tools:text="ADMIN"/>
 

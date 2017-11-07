@@ -44,6 +44,7 @@
 
             <LinearLayout
                 android:orientation="horizontal"
+                android:baselineAligned="false"
                 android:id="@+id/city_state_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

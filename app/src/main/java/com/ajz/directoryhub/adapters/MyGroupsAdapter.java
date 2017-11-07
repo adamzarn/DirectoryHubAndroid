@@ -59,7 +59,8 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         }
         holder.groupNameTextView.setText(group.getName());
         holder.cityStateTextView.setText(group.getCity() + ", " + group.getState());
-        String createdByString = "Created by: " + group.getCreatedBy();
+        holder.createdByTextView.getContext().getResources().getString(R.string.created_by_prefix);
+        String createdByString = holder.createdByTextView.getContext().getResources().getString(R.string.created_by_prefix) + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
 
         holder.deleteGroupButton.setOnClickListener(new View.OnClickListener() {
@@ -203,10 +204,6 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
             }
         }
         notifyDataSetChanged();
-    }
-
-    public Group getGroup(int position) {
-        return groups.get(position);
     }
 
 }

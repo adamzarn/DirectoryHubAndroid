@@ -78,7 +78,7 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
         Group group = groups.get(position);
         holder.groupNameTextView.setText(group.getName());
         holder.cityStateTextView.setText(group.getCity() + ", " + group.getState());
-        String createdByString = "Created by: " + group.getCreatedBy();
+        String createdByString = holder.createdByTextView.getContext().getResources().getString(R.string.created_by_prefix) + group.getCreatedBy();
         holder.createdByTextView.setText(createdByString);
         holder.deleteGroupButton.setVisibility(View.GONE);
         holder.editGroupButton.setVisibility(View.GONE);

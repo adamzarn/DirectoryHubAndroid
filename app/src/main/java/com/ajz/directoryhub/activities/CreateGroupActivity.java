@@ -49,10 +49,14 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         mAuth = FirebaseAuth.getInstance();
 
         if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
-            getSupportActionBar().setTitle("Create Group");
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(get(R.string.create_group_title));
+            }
             groupToEdit = new Group();
         } else {
-            getSupportActionBar().setTitle("Edit Group");
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(get(R.string.edit_group_title));
+            }
             groupToEdit = getIntent().getExtras().getParcelable("groupToEdit");
             editedAdmins = groupToEdit.getAdmins();
             editedUsers = groupToEdit.getUsers();
@@ -74,22 +78,22 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
     public void onButtonClick(String groupUid, ArrayList<String> groupUids, String groupName, String city, String state, String password, byte[] groupLogo, ProgressBar pb) {
 
         if (StringUtils.isMissing(groupName)) {
-            DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing Group Name", "Please provide a group name.");
+            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.missing_group_name_title), get(R.string.missing_group_name_message));
             pb.setVisibility(View.INVISIBLE);
             return;
         }
         if (StringUtils.isMissing(city)) {
-            DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing City", "Please provide a city.");
+            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.missing_city_title), get(R.string.missing_city_message));
             pb.setVisibility(View.INVISIBLE);
             return;
         }
         if (StringUtils.isMissing(state)) {
-            DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing State", "Please provide a state.");
+            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.missing_state_title), get(R.string.missing_state_message));
             pb.setVisibility(View.INVISIBLE);
             return;
         }
         if (StringUtils.isMissing(password)) {
-            DialogUtils.showPositiveAlert(CreateGroupActivity.this, "Missing Password", "Please provide a password.");
+            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.missing_password_title), get(R.string.missing_password_message));
             pb.setVisibility(View.INVISIBLE);
             return;
         }
@@ -150,11 +154,11 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                         byte[] bytes = IOUtils.toByteArray(inputStream);
                         createGroupFragment.setImage(bytes);
                     } catch (IOException e) {
-                        System.out.println("Error");
+                        System.out.println(e.getMessage());
                     }
                 }
             } catch (FileNotFoundException e) {
-                System.out.println("Error");
+                System.out.println(e.getMessage());
             }
         }
         if (requestCode == 2) {
@@ -170,12 +174,12 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
     @Override
     public void deleteGroup(final Group groupToDelete) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateGroupActivity.this);
-        builder1.setTitle("Delete Group");
-        builder1.setMessage("This will permanently delete this group from the database. Are you sure you want to continue?");
+        builder1.setTitle(get(R.string.delete_group_title));
+        builder1.setMessage(get(R.string.delete_group_message));
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         new FirebaseClient().deleteGroup(CreateGroupActivity.this, groupToDelete.getUid());
@@ -183,7 +187,7 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                 });
 
         builder1.setNegativeButton(
-                "No",
+                get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -193,6 +197,10 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
         AlertDialog alert11 = builder1.create();
         alert11.show();
 
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

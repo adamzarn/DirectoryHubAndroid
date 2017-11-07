@@ -31,8 +31,6 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
 
-        getSupportActionBar().setTitle("");
-
         EntryFragment entryFragment = new EntryFragment();
         entryFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -73,7 +71,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
         Button addToContactsButton = (Button) contactPersonView.findViewById(R.id.add_to_contacts_button);
 
         builder1.setNegativeButton(
-                "Cancel",
+                get(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -144,9 +142,13 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
 
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(this, "Added Contact", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.added_contact_message, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

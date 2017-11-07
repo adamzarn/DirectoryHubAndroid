@@ -37,7 +37,6 @@
             android:layout_marginTop="@dimen/margin_sm"
             android:background="@drawable/my_checkbox" />
 
-
     </LinearLayout>
 
     <View

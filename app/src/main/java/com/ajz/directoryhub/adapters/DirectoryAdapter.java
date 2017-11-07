@@ -1,7 +1,6 @@
 package com.ajz.directoryhub.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ajz.directoryhub.R;
+import com.ajz.directoryhub.StringUtils;
 import com.ajz.directoryhub.objects.Entry;
 
 import java.util.ArrayList;
@@ -51,49 +51,49 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
         holder.headerTextView.setText(entry.getHeader());
 
-        if (!TextUtils.equals(entry.getPhone(), "")) {
+        if (!StringUtils.isMissing(entry.getPhone())) {
             holder.phoneTextView.setVisibility(View.VISIBLE);
             holder.phoneTextView.setText(entry.getPhone());
         } else {
             holder.phoneTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getEmail(), "")) {
+        if (!StringUtils.isMissing(entry.getEmail())) {
             holder.emailTextView.setVisibility(View.VISIBLE);
             holder.emailTextView.setText(entry.getEmail());
         } else {
             holder.emailTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getAddress().getLine2(), "")) {
+        if (!StringUtils.isMissing(entry.getAddress().getLine2())) {
             holder.line2TextView.setVisibility(View.VISIBLE);
             holder.line2TextView.setText(entry.getAddress().getLine2());
         } else {
             holder.line2TextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getAddress().getLine3(), "")) {
+        if (!StringUtils.isMissing(entry.getAddress().getLine3())) {
             holder.line3TextView.setVisibility(View.VISIBLE);
             holder.line3TextView.setText(entry.getAddress().getLine3());
         } else {
             holder.line3TextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getAddress().getStreet(), "")) {
+        if (!StringUtils.isMissing(entry.getAddress().getStreet())) {
             holder.streetTextView.setVisibility(View.VISIBLE);
             holder.streetTextView.setText(entry.getAddress().getStreet());
         } else {
             holder.streetTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getAddress().getCityStateZip(), "")) {
+        if (!StringUtils.isMissing(entry.getAddress().getCityStateZip())) {
             holder.cityStateZipTextView.setVisibility(View.VISIBLE);
             holder.cityStateZipTextView.setText(entry.getAddress().getCityStateZip());
         } else {
             holder.cityStateZipTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(entry.getChildrenString(), "")) {
+        if (!StringUtils.isMissing(entry.getChildrenString())) {
             holder.childrenTextView.setVisibility(View.VISIBLE);
             holder.childrenTextView.setText(entry.getChildrenString());
         } else {

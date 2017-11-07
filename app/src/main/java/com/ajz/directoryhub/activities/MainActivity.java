@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
 
         mAuth = FirebaseAuth.getInstance();
 
-        getSupportActionBar().setTitle(getResources().getString(R.string.main_activity_title));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.main_activity_title));
+        }
 
         LoginFragment loginFragment = new LoginFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -48,7 +50,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
     public void onButtonClick(Button b, final String email, String password, final ProgressBar pb) {
         switch (b.getId()) {
             case R.id.login_button:
-                if (!StringUtils.isMissing(email) && !StringUtils.isMissing(password)) {
+                if (StringUtils.isMissing(email)) {
+                    pb.setVisibility(View.INVISIBLE);
+                    DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.missing_email_title), get(R.string.missing_email_message));
+                    return;
+                } else if (StringUtils.isMissing(password)) {
+                    pb.setVisibility(View.INVISIBLE);
+                    DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.missing_password_title), get(R.string.missing_password_message));
+                    return;
+                } else {
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -56,13 +66,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                             if (task.isSuccessful()) {
                                 startMyGroups();
                             } else {
-                                DialogUtils.showPositiveAlert(MainActivity.this, "Error", task.getException().getMessage());
+                                DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.error_title), task.getException().getMessage());
                             }
                         }
                     });
-                } else {
-                    pb.setVisibility(View.INVISIBLE);
-                    DialogUtils.showPositiveAlert(MainActivity.this, "Missing Email or Password", "You must enter an email and password to login.");
                 }
                 break;
             case R.id.create_account_button:
@@ -73,29 +80,28 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
             case R.id.forgot_password_button:
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setTitle("Send Password Reset Email");
-                builder1.setMessage("Send email to " + email + "?");
+                builder1.setTitle(get(R.string.send_password_reset_email_title));
+                builder1.setMessage(get(R.string.send_password_reset_email_message_prefix) + email + "?");
                 builder1.setCancelable(true);
 
                 builder1.setPositiveButton(
-                        "OK",
+                        get(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int id) {
-                                mAuth.sendPasswordResetEmail(email)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                dialog.cancel();
-                                                if (task.isSuccessful()) {
-                                                    System.out.println("Success");
-                                                }
-                                            }
-                                        });
+                                mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        dialog.cancel();
+                                        if (task.isSuccessful()) {
+                                            DialogUtils.showPositiveAlert(getApplicationContext(), get(R.string.password_reset_email_sent), get(R.string.password_reset_email_sent_message));
+                                        }
+                                    }
+                                });
                             }
                         });
 
                 builder1.setNegativeButton(
-                        "No",
+                        get(R.string.no),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
@@ -122,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
         Class myGroups = MyGroupsActivity.class;
         Intent myGroupsIntent = new Intent(getApplicationContext(), myGroups);
         startActivity(myGroupsIntent);
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

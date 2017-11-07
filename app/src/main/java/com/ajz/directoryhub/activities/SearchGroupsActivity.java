@@ -29,7 +29,9 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_groups);
 
-        getSupportActionBar().setTitle("Search Groups");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.search_groups_title));
+        }
 
         SearchGroupsFragment searchGroupsFragment = new SearchGroupsFragment();
         searchGroupsFragment.setArguments(getIntent().getExtras());
@@ -53,26 +55,30 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
 
         final EditText groupPasswordEditText = (EditText) dialogView.findViewById(R.id.group_password_edit_text);
 
-        dialogBuilder.setTitle("Password Required");
-        dialogBuilder.setMessage("Enter the password to join the group \"" + selectedGroup.getName() + "\"");
-        dialogBuilder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        dialogBuilder.setTitle(get(R.string.password_required));
+        dialogBuilder.setMessage(get(R.string.enter_password_prefix) + selectedGroup.getName() + "\"");
+        dialogBuilder.setPositiveButton(get(R.string.submit), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
                     ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
                     currentUserGroups.add(selectedGroup.getUid());
                     new FirebaseClient().joinGroup(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups, "users");
                 } else {
-                    Toast.makeText(getApplicationContext(),"Incorrect Password",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), get(R.string.incorrect_password), Toast.LENGTH_LONG).show();
                 }
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(get(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
         });
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

@@ -25,7 +25,9 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directory);
 
-        getSupportActionBar().setTitle("Directory");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.directory_title));
+        }
 
         if (getIntent().getExtras() != null) {
             groupUid = getIntent().getExtras().getString("groupUid");
@@ -58,12 +60,12 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
     @Override
     public void onDeleteEntryClicked(final Entry entryToDelete) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(DirectoryActivity.this);
-        builder1.setTitle("Delete Entry");
-        builder1.setMessage("Are you sure you want to continue?");
+        builder1.setTitle(get(R.string.delete_entry_title));
+        builder1.setMessage(get(R.string.delete_entry_message));
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         new FirebaseClient().deleteEntry(DirectoryActivity.this, groupUid, entryToDelete.getUid());
@@ -71,7 +73,7 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
                 });
 
         builder1.setNegativeButton(
-                "No",
+                get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -94,5 +96,9 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("groupUid", groupUid);
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 }

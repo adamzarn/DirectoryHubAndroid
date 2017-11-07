@@ -86,7 +86,7 @@ public class CreateEntryFragment extends Fragment {
 
     @OnClick(R.id.add_person_button)
     public void addPersonButtonClicked() {
-        mCallback.onPersonSelected(null, "Add Person");
+        mCallback.onPersonSelected(null, get(R.string.add_person_title));
     }
 
     @BindView(R.id.submit_create_entry_button)
@@ -110,26 +110,26 @@ public class CreateEntryFragment extends Fragment {
         CustomAddress address = new CustomAddress(street, line2, line3, city, state, zip);
 
         if (StringUtils.isMissing(lastName)) {
-            mCallback.displayInvalidSubmissionAlert("Missing Last Name", "A new entry must have a last name.", 1);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.missing_entry_last_name_title), get(R.string.missing_entry_last_name_message), 1);
             return;
         }
 
         if (getAdults(entryToEdit.getPeople()).size() == 0) {
-            mCallback.displayInvalidSubmissionAlert("No Adults", "A new entry must have at least 1 adult.", 1);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.no_adults_title), get(R.string.no_adults_message), 1);
             return;
         }
 
         if (phone.length() < 12 && phone.length() > 0) {
-            mCallback.displayInvalidSubmissionAlert("Bad Phone Number", "Phone Numbers must be 12 characters long.", 1);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.bad_phone_number_title), get(R.string.bad_phone_number_message), 1);
             return;
         }
 
         if (getAdults(entryToEdit.getPeople()).size() == 1) {
-            if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(),"Husband")) {
-                mCallback.displayInvalidSubmissionAlert("Missing Spouse", "A husband must have a wife.", 1);
+            if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(), get(R.string.husband))) {
+                mCallback.displayInvalidSubmissionAlert(get(R.string.missing_spouse_title), get(R.string.missing_wife_message), 1);
                 return;
-            } else if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(),"Wife")) {
-                mCallback.displayInvalidSubmissionAlert("Missing Spouse", "A wife must have a husband.", 1);
+            } else if (TextUtils.equals(getAdults(entryToEdit.getPeople()).get(0).getType(), get(R.string.wife))) {
+                mCallback.displayInvalidSubmissionAlert(get(R.string.missing_spouse_title), get(R.string.missing_husband_message), 1);
                 return;
             }
         }
@@ -162,7 +162,7 @@ public class CreateEntryFragment extends Fragment {
         try {
             mCallback = (CreateEntryFragment.ClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListener");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -173,7 +173,7 @@ public class CreateEntryFragment extends Fragment {
         parent = container;
         ButterKnife.bind(this, rootView);
 
-        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("", "IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                 "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"));
         stateAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, stateArray) {
             @Override
@@ -195,10 +195,10 @@ public class CreateEntryFragment extends Fragment {
             entryToEdit = getArguments().getParcelable("entryToEdit");
             populateInfo();
             populatePeople();
-            createEntryButton.setText("SUBMIT CHANGES");
+            createEntryButton.setText(get(R.string.submit_changes));
         } else {
             entryToEdit = new Entry();
-            createEntryButton.setText("SUBMIT");
+            createEntryButton.setText(get(R.string.submit));
         }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(
@@ -296,7 +296,7 @@ public class CreateEntryFragment extends Fragment {
 
         if (entryToEdit.getPeople() != null) {
             for (Person person : entryToEdit.getPeople()) {
-                if (!TextUtils.equals(person.getType(), "Child")) {
+                if (!TextUtils.equals(person.getType(), get(R.string.child))) {
                     adults.add(person);
                 } else {
                     children.add(person);
@@ -345,28 +345,30 @@ public class CreateEntryFragment extends Fragment {
         TextView emailTextView = (TextView) personView.findViewById(R.id.email_text_view);
         Button deletePersonButton = (Button) personView.findViewById(R.id.delete_person_button);
 
-        if (!TextUtils.equals(person.getType(),"Child")) {
+        if (!TextUtils.equals(person.getType(), get(R.string.child))) {
             nameTextView.setText(person.getName() + ", " + person.getType());
         } else {
-            String birthOrderString = "st child";
+            String birthOrderString = get(R.string.st_child);
             if (person.getBirthOrder() == 2) {
-                birthOrderString = "nd child";
+                birthOrderString = get(R.string.nd_child);
             } else if (person.getBirthOrder() == 3) {
-                birthOrderString = "rd child";
+                birthOrderString = get(R.string.rd_child);
             } else if (person.getBirthOrder() > 3) {
-                birthOrderString = "th child";
+                birthOrderString = get(R.string.th_child);
             }
             nameTextView.setText(person.getName() + ", " + person.getBirthOrder() + birthOrderString);
         }
 
-        if (!TextUtils.equals(person.getPhone(),"")) {
-            phoneTextView.setText("Phone: " + person.getPhone());
+        if (!StringUtils.isMissing(person.getPhone())) {
+            String phoneText = get(R.string.phone_prefix) + person.getPhone();
+            phoneTextView.setText(phoneText);
         } else {
             phoneTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(person.getEmail(),"")) {
-            emailTextView.setText("Email: " + person.getEmail());
+        if (!StringUtils.isMissing(person.getEmail())) {
+            String emailText = get(R.string.email_prefix) + person.getEmail();
+            emailTextView.setText(emailText);
         } else {
             emailTextView.setVisibility(View.GONE);
         }
@@ -381,7 +383,7 @@ public class CreateEntryFragment extends Fragment {
         personView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onPersonSelected(person, "Edit Person");
+                mCallback.onPersonSelected(person, get(R.string.edit_person_title));
             }
         });
 
@@ -426,49 +428,49 @@ public class CreateEntryFragment extends Fragment {
     private Boolean validateNewPerson(Person newPerson) {
 
         if (StringUtils.isMissing(newPerson.getName())) {
-            mCallback.displayInvalidSubmissionAlert("No Name", "You must enter a first name.", 0);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.missing_entry_first_name_title), get(R.string.missing_entry_first_name_message), 0);
             return false;
         }
 
         if (StringUtils.isMissing(newPerson.getType())) {
-            mCallback.displayInvalidSubmissionAlert("No Type", "Each person must have a type.", 0);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.missing_type_title), get(R.string.missing_type_messaage), 0);
             return false;
         }
 
-        if (TextUtils.equals(newPerson.getType(),"Child") && newPerson.getBirthOrder() == 0) {
-            mCallback.displayInvalidSubmissionAlert("Missing Birth Order", "Children must have a birth order.", 0);
+        if (TextUtils.equals(newPerson.getType(), get(R.string.child)) && newPerson.getBirthOrder() == 0) {
+            mCallback.displayInvalidSubmissionAlert(get(R.string.missing_birth_order_title), get(R.string.missing_birth_order_message), 0);
             return false;
         }
 
         if (newPerson.getPhone().length() < 12 && newPerson.getPhone().length() > 0) {
-            mCallback.displayInvalidSubmissionAlert("Bad Phone Number", "Phone Numbers must be 12 characters long.", 0);
+            mCallback.displayInvalidSubmissionAlert(get(R.string.bad_phone_number_title), get(R.string.bad_phone_number_message), 0);
             return false;
         }
 
-        if (!TextUtils.equals(newPerson.getType(),"Child")) {
+        if (!TextUtils.equals(newPerson.getType(), get(R.string.child))) {
             if (getOtherPersonTypes(newPerson).contains(newPerson.getType())) {
-                mCallback.displayInvalidSubmissionAlert("Duplicate Person Type", "Entries can only contain one " + newPerson.getType() + ".", 0);
+                mCallback.displayInvalidSubmissionAlert(get(R.string.duplicate_person_type_title), get(R.string.duplicate_person_type_message) + newPerson.getType() + ".", 0);
                 return false;
             }
         }
 
-        if (TextUtils.equals(newPerson.getType(), "Husband") || TextUtils.equals(newPerson.getType(), "Wife")) {
-            if (getOtherPersonTypes(newPerson).contains("Single")) {
-                mCallback.displayInvalidSubmissionAlert("Error", "Married couples and adult Singles cannot be in the same entry.", 0);
+        if (TextUtils.equals(newPerson.getType(), get(R.string.husband)) || TextUtils.equals(newPerson.getType(), get(R.string.wife))) {
+            if (getOtherPersonTypes(newPerson).contains(get(R.string.single))) {
+                mCallback.displayInvalidSubmissionAlert(get(R.string.error_title), get(R.string.person_type_conflict_message), 0);
                 return false;
             }
         }
 
-        if (TextUtils.equals(newPerson.getType(),"Single")) {
-            if (getOtherPersonTypes(newPerson).contains("Husband") || getOtherPersonTypes(newPerson).contains("Wife")) {
-                mCallback.displayInvalidSubmissionAlert("Error", "Married couples and adult Singles cannot be in the same entry.", 0);
+        if (TextUtils.equals(newPerson.getType(), get(R.string.single))) {
+            if (getOtherPersonTypes(newPerson).contains(get(R.string.husband)) || getOtherPersonTypes(newPerson).contains(get(R.string.wife))) {
+                mCallback.displayInvalidSubmissionAlert(get(R.string.error_title), get(R.string.person_type_conflict_message), 0);
                 return false;
             }
         }
 
         if (newPerson.getBirthOrder() != 0) {
             if (getOtherBirthOrders(newPerson).contains(newPerson.getBirthOrder())) {
-                mCallback.displayInvalidSubmissionAlert("Bad Birth Order", "Birth Order must be unique.", 0);
+                mCallback.displayInvalidSubmissionAlert(get(R.string.duplicate_birth_order_title), get(R.string.duplicate_birth_order_message), 0);
                 return false;
             }
         }
@@ -509,7 +511,7 @@ public class CreateEntryFragment extends Fragment {
         ArrayList<Person> adults = new ArrayList<>();
         if (people != null) {
             for (Person person : people) {
-                if (!TextUtils.equals(person.getType(), "Child")) {
+                if (!TextUtils.equals(person.getType(), get(R.string.child))) {
                     adults.add(person);
                 }
             }
@@ -521,7 +523,7 @@ public class CreateEntryFragment extends Fragment {
         ArrayList<Person> children = new ArrayList<>();
         if (people != null) {
             for (Person person : people) {
-                if (TextUtils.equals(person.getType(), "Child")) {
+                if (TextUtils.equals(person.getType(), get(R.string.child))) {
                     children.add(person);
                 }
             }
@@ -544,6 +546,10 @@ public class CreateEntryFragment extends Fragment {
 
         entryToEdit.setPeople(people);
         populatePeople();
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 
 }

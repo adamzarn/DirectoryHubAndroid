@@ -50,28 +50,28 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
     public void onButtonClick(String firstName, String lastName, String email, String password, String passwordVerification, final ProgressBar pb) {
 
         if (StringUtils.isMissing(firstName)) {
-            DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Missing First Name", "Please provide a first name.");
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.missing_first_name_title), get(R.string.missing_first_name_message));
             pb.setVisibility(View.GONE);
             return;
         }
         if (StringUtils.isMissing(lastName)) {
-            DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Missing Last Name", "Please provide a last name.");
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.missing_last_name_title), get(R.string.missing_last_name_message));
             pb.setVisibility(View.GONE);
             return;
         }
         if (StringUtils.isMissing(email)) {
-            DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Missing Email", "Please provide an email.");
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.missing_email_title), get(R.string.missing_email_message));
             pb.setVisibility(View.GONE);
             return;
         }
         if (StringUtils.isMissing(password)) {
-            DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Missing Password", "Please provide a password.");
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.missing_password_title), get(R.string.missing_password_message));
             pb.setVisibility(View.GONE);
             return;
         }
 
         if (!TextUtils.equals(password, passwordVerification)) {
-            DialogUtils.showPositiveAlert(CreateAccountActivity.this, "Password Mismatch", "Your passwords do not match. Please try again.");
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.password_mismatch_title), get(R.string.password_mismatch_message));
             pb.setVisibility(View.GONE);
             return;
         }
@@ -117,6 +117,10 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
         Class myGroups = MyGroupsActivity.class;
         Intent myGroupsIntent = new Intent(getApplicationContext(), myGroups);
         startActivity(myGroupsIntent);
+    }
+
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

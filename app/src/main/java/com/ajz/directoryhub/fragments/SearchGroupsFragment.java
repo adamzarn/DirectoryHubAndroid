@@ -1,7 +1,6 @@
 package com.ajz.directoryhub.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.widget.ProgressBar;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.StringUtils;
-import com.ajz.directoryhub.activities.MyGroupsActivity;
 import com.ajz.directoryhub.adapters.SearchGroupsAdapter;
 import com.ajz.directoryhub.objects.Group;
 
@@ -94,7 +92,7 @@ public class SearchGroupsFragment extends Fragment {
         try {
             mCallback = (OnGroupClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListeners");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -164,15 +162,13 @@ public class SearchGroupsFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    public void goBackToMyGroups() {
-        Class myGroups = MyGroupsActivity.class;
-        Intent intent = new Intent(getActivity(), myGroups);
-        startActivity(intent);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         groupUids = getArguments().getStringArrayList("groupUids");
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 }

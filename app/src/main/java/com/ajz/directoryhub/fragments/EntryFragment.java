@@ -7,13 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
+import com.ajz.directoryhub.StringUtils;
 import com.ajz.directoryhub.objects.Entry;
 import com.ajz.directoryhub.objects.Person;
 
@@ -142,7 +142,7 @@ public class EntryFragment extends Fragment {
         try {
             mCallback = (OnEditEntryClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListener");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -189,9 +189,13 @@ public class EntryFragment extends Fragment {
 
         currentEntry = selectedEntry;
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(selectedEntry.getTitle());
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-        if (!TextUtils.equals(selectedEntry.getPhone(),"")) {
+        if (actionBar != null) {
+            actionBar.setTitle(selectedEntry.getTitle());
+        }
+
+        if (!StringUtils.isMissing(selectedEntry.getPhone())) {
             phoneTextView.setText(selectedEntry.getPhone());
             phoneLinearLayout.setVisibility(View.VISIBLE);
             clickablePhoneLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +209,7 @@ public class EntryFragment extends Fragment {
         } else {
             phoneLinearLayout.setVisibility(View.GONE);
         }
-        if (!TextUtils.equals(selectedEntry.getEmail(),"")) {
+        if (!StringUtils.isMissing(selectedEntry.getEmail())) {
             emailTextView.setText(selectedEntry.getEmail());
             emailLinearLayout.setVisibility(View.VISIBLE);
             clickableEmailLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -219,10 +223,10 @@ public class EntryFragment extends Fragment {
         } else {
             emailLinearLayout.setVisibility(View.GONE);
         }
-        if (!TextUtils.equals(selectedEntry.getAddress().getLine2(),"") ||
-            !TextUtils.equals(selectedEntry.getAddress().getLine3(),"") ||
-            !TextUtils.equals(selectedEntry.getAddress().getStreet(),"") ||
-            !TextUtils.equals(selectedEntry.getAddress().getCityStateZip(),"")) {
+        if (!StringUtils.isMissing(selectedEntry.getAddress().getLine2()) ||
+                !StringUtils.isMissing(selectedEntry.getAddress().getLine3()) ||
+                !StringUtils.isMissing(selectedEntry.getAddress().getStreet()) ||
+                !StringUtils.isMissing(selectedEntry.getAddress().getCityStateZip())) {
 
             addressLinearLayout.setVisibility(View.VISIBLE);
             addressLinearLayout.setVisibility(View.VISIBLE);
@@ -234,25 +238,25 @@ public class EntryFragment extends Fragment {
                 }
             });
 
-            if (!TextUtils.equals(selectedEntry.getAddress().getLine2(),"")) {
+            if (!StringUtils.isMissing(selectedEntry.getAddress().getLine2())) {
                 line2TextView.setVisibility(View.VISIBLE);
                 line2TextView.setText(selectedEntry.getAddress().getLine2());
             } else {
                 line2TextView.setVisibility(View.GONE);
             }
-            if (!TextUtils.equals(selectedEntry.getAddress().getLine3(),"")) {
+            if (!StringUtils.isMissing(selectedEntry.getAddress().getLine3())) {
                 line3TextView.setVisibility(View.VISIBLE);
                 line3TextView.setText(selectedEntry.getAddress().getLine3());
             } else {
                 line3TextView.setVisibility(View.GONE);
             }
-            if (!TextUtils.equals(selectedEntry.getAddress().getStreet(),"")) {
+            if (!StringUtils.isMissing(selectedEntry.getAddress().getStreet())) {
                 streetTextView.setVisibility(View.VISIBLE);
                 streetTextView.setText(selectedEntry.getAddress().getStreet());
             } else {
                 streetTextView.setVisibility(View.GONE);
             }
-            if (!TextUtils.equals(selectedEntry.getAddress().getCityStateZip(),"")) {
+            if (!StringUtils.isMissing(selectedEntry.getAddress().getCityStateZip())) {
                 cityStateZipTextView.setVisibility(View.VISIBLE);
                 cityStateZipTextView.setText(selectedEntry.getAddress().getCityStateZip());
             } else {
@@ -322,28 +326,30 @@ public class EntryFragment extends Fragment {
         LinearLayout deleteButtonLinearLayout = (LinearLayout) personView.findViewById(R.id.delete_button_linear_layout);
         deleteButtonLinearLayout.setVisibility(View.GONE);
 
-        if (!TextUtils.equals(person.getType(),"Child")) {
+        if (!TextUtils.equals(person.getType(), get(R.string.child))) {
             nameTextView.setText(person.getName() + ", " + person.getType());
         } else {
-            String birthOrderString = "st child";
+            String birthOrderString = get(R.string.st_child);
             if (person.getBirthOrder() == 2) {
-                birthOrderString = "nd child";
+                birthOrderString = get(R.string.nd_child);
             } else if (person.getBirthOrder() == 3) {
-                birthOrderString = "rd child";
+                birthOrderString = get(R.string.rd_child);
             } else if (person.getBirthOrder() > 3) {
-                birthOrderString = "th child";
+                birthOrderString = get(R.string.th_child);
             }
             nameTextView.setText(person.getName() + ", " + person.getBirthOrder() + birthOrderString);
         }
 
-        if (!TextUtils.equals(person.getPhone(),"")) {
-            phoneTextView.setText("Phone: " + person.getPhone());
+        if (!StringUtils.isMissing(person.getPhone())) {
+            String phoneText = get(R.string.phone_prefix) + person.getPhone();
+            phoneTextView.setText(phoneText);
         } else {
             phoneTextView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.equals(person.getEmail(),"")) {
-            emailTextView.setText("Email: " + person.getEmail());
+        if (!StringUtils.isMissing(person.getEmail())) {
+            String emailText = get(R.string.email_prefix) + person.getEmail();
+            emailTextView.setText(emailText);
         } else {
             emailTextView.setVisibility(View.GONE);
         }
@@ -364,6 +370,10 @@ public class EntryFragment extends Fragment {
         separatorView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 4));
         separatorView.setBackgroundColor(getResources().getColor(R.color.lightGray, getActivity().getTheme()));
         ll.addView(separatorView);
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 
 }

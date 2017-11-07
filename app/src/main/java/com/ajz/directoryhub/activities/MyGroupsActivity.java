@@ -35,7 +35,9 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
 
         mAuth = FirebaseAuth.getInstance();
 
-        getSupportActionBar().setTitle("My Groups");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.my_groups_title));
+        }
 
         MyGroupsFragment myGroupsFragment = new MyGroupsFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -72,26 +74,33 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
     @Override
     public void onGroupToDeleteSelected(final Group groupToDelete) {
 
+        final String userType;
+        if (groupToDelete.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
+            userType = "admins";
+        } else {
+            userType = "users";
+        }
+
         if (groupToDelete.getAdminKeys().size() == 1 && groupToDelete.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
-            DialogUtils.showPositiveAlert(MyGroupsActivity.this, "Cannot Delete", "You are the only administrator for \"" + groupToDelete.getName() + "\", so you cannot delete it.");
+            DialogUtils.showPositiveAlert(MyGroupsActivity.this, get(R.string.cannot_delete_title), get(R.string.cannot_delete_message_1) + groupToDelete.getName() + get(R.string.cannot_delete_message_2));
         } else {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(MyGroupsActivity.this);
-            builder1.setTitle("Delete Group");
-            builder1.setMessage("This will only remove \"" + groupToDelete.getName() + "\" from \"My Groups\". You will be able to add it back again later. Continue?");
+            builder1.setTitle(get(R.string.delete_group_title));
+            builder1.setMessage(get(R.string.delete_from_my_groups_message_1) + groupToDelete.getName() + get(R.string.delete_from_my_groups_message_2));
             builder1.setCancelable(true);
 
             builder1.setPositiveButton(
-                    "Yes",
+                    get(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             String groupUid = groupToDelete.getUid();
                             groupUids.remove(groupUid);
-                            new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, groupUids);
+                            new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, userType, groupUids);
                         }
                     });
 
             builder1.setNegativeButton(
-                    "No",
+                    get(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
@@ -154,7 +163,7 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
                 });
 
         builder1.setNeutralButton(
-                "Cancel",
+                get(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -173,8 +182,8 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
         return groupUids;
     }
 
-    public void displayOnlyAdminAlert() {
-        DialogUtils.showPositiveAlert(MyGroupsActivity.this, "Hold On", "You are the only administrator for this group, so you cannot remove it from \"My Groups\".");
+    public String get(int i) {
+        return getResources().getString(i);
     }
 
 }

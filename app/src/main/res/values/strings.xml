@@ -55,4 +55,141 @@
     <string name="person_phone_placeholoder">Phone</string>
     <string name="person_email_placeholder">Email</string>
 
+    <string name="missing_first_name_title">Missing First Name</string>
+    <string name="missing_first_name_message">Please provide a first name.</string>
+
+    <string name="missing_last_name_title">Missing Last Name</string>
+    <string name="missing_last_name_message">Please provide a last name.</string>
+
+    <string name="missing_email_title">Missing Email</string>
+    <string name="missing_email_message">Please provide an email.</string>
+
+    <string name="missing_password_title">Missing Password</string>
+    <string name="missing_password_message">Please provide a password.</string>
+
+    <string name="password_mismatch_title">Password Mismatch</string>
+    <string name="password_mismatch_message">Your passwords do not match. Please try again.</string>
+
+    <string name="missing_group_name_title">Missing Group Name</string>
+    <string name="missing_group_name_message">Please provide a group name.</string>
+
+    <string name="missing_city_title">Missing City</string>
+    <string name="missing_city_message">Please provide a city.</string>
+
+    <string name="missing_state_title">Missing State</string>
+    <string name="missing_state_message">Please provide a state.</string>
+
+    <string name="edit_entry_title">Edit Entry</string>
+    <string name="add_entry_title">Add Entry</string>
+
+    <string name="edit_person_title">Edit Person</string>
+    <string name="add_person_title">Add Person</string>
+
+    <string name="type">Type</string>
+    <string name="husband">Husband</string>
+    <string name="wife">Wife</string>
+    <string name="single">Single</string>
+    <string name="child">Child</string>
+
+    <string name="birth_order">Birth Order</string>
+
+    <string name="submit">Submit</string>
+    <string name="submit_changes">Submit Changes</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="delete_person_title">Delete Person</string>
+    <string name="delete_person_message_prefix">Are you sure you want to delete </string>
+
+    <string name="create_group_title">Create Group</string>
+    <string name="edit_group_title">Edit Group</string>
+
+    <string name="delete_group_title">Delete Group</string>
+    <string name="delete_group_message">This will permanently delete this group from the database. Are you sure you want to continue?</string>
+
+    <string name="directory_title">Directory</string>
+    <string name="delete_entry_title">Delete Entry</string>
+    <string name="delete_entry_message">Are you sure you want to continue?</string>
+
+    <string name="added_contact_message">Added Contact</string>
+
+    <string name="error_title">Error</string>
+
+    <string name="password_reset_email_sent">Password Reset Email Sent</string>
+    <string name="password_reset_email_sent_message">Please check your email to reset your password.</string>
+
+    <string name="send_password_reset_email_title">Send Password Reset Email</string>
+    <string name="send_password_reset_email_message_prefix">"Send email to </string>
+
+    <string name="manage_administrators_title">Manage Administrators</string>
+
+    <string name="my_groups_title">My Groups</string>
+
+    <string name="cannot_delete_title">Cannot Delete</string>
+    <string name="cannot_delete_message_1">You are the only administrator for "</string>
+    <string name="cannot_delete_message_2">", so you cannot delete it.</string>
+
+    <string name="delete_from_my_groups_message_1">This will only remove "</string>
+    <string name="delete_from_my_groups_message_2">" from "My Groups". You will be able to add it back again later. Continue?</string>
+
+    <string name="search_groups_title">Search Groups</string>
+    <string name="password_required">Password Required</string>
+    <string name="enter_password_prefix">Enter the password to join the group "</string>
+    <string name="incorrect_password">Incorrect Password</string>
+
+    <string name="created_by_prefix">Created by: </string>
+
+    <string name="must_implement_interface">Must implement interface</string>
+
+    <string name="st_child">st child</string>
+    <string name="nd_child">nd child</string>
+    <string name="rd_child">rd child</string>
+    <string name="th_child">th child</string>
+
+    <string name="phone_prefix">Phone: </string>
+    <string name="email_prefix">Email: </string>
+
+    <string name="missing_entry_last_name_title">Missing Last Name</string>
+    <string name="missing_entry_last_name_message">A new entry must have a last name.</string>
+
+    <string name="no_adults_title">No Adults</string>
+    <string name="no_adults_message">A new entry must have at least 1 adult.</string>
+
+    <string name="bad_phone_number_title">Bad Phone Number</string>
+    <string name="bad_phone_number_message">Phone Numbers must be 12 characters long.</string>
+
+    <string name="missing_spouse_title">Missing Spouse</string>
+
+    <string name="missing_wife_message">A husband must have a wife.</string>
+    <string name="missing_husband_message">A wife must have a husband.</string>
+
+    <string name="missing_entry_first_name_title">Missing First Name</string>
+    <string name="missing_entry_first_name_message">You must enter a first name.</string>
+
+    <string name="missing_type_title">Missing Type</string>
+    <string name="missing_type_messaage">Each person must have a type.</string>
+
+    <string name="missing_birth_order_title">Missing Birth Order</string>
+    <string name="missing_birth_order_message">Children must have a birth order.</string>
+
+    <string name="duplicate_person_type_title">Duplicate Person Type</string>
+    <string name="duplicate_person_type_message">Entries can only contain one </string>
+
+    <string name="person_type_conflict_message">Married couples and adult Singles cannot be in the same entry.</string>
+
+    <string name="duplicate_birth_order_title">Duplicate Birth Order</string>
+    <string name="duplicate_birth_order_message">Birth Order must be unique.</string>
+
+    <string name="unique_id_label">UNIQUE ID: </string>
+
+    <string name="call">Call</string>
+    <string name="text">Text</string>
+    <string name="email">Email</string>
+    <string name="add_to_contacts">Add to Contacts</string>
+
+    <string name="member">MEMBER</string>
+    <string name="admin">ADMIN</string>
+
 </resources>

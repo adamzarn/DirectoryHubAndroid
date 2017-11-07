@@ -236,45 +236,21 @@ public class FirebaseClient {
         });
     }
 
-    public void deleteFromMyGroups(final MyGroupsActivity activity, final String groupUid, final ArrayList<String> userGroups) {
+    public void deleteFromMyGroups(final MyGroupsActivity activity, final String groupUid, String userType, final ArrayList<String> userGroups) {
 
         final String userUid = mAuth.getCurrentUser().getUid();
-
         final DatabaseReference userGroupsRef = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("groups");
+        final DatabaseReference groupUsersRef = mDatabase.child("Groups").child(groupUid).child(userType).child(userUid);
 
-        final DatabaseReference groupRef = mDatabase.child("Groups").child(groupUid);
-
-        final DatabaseReference adminsRef = mDatabase.child("Groups").child(groupUid).child("admins");
-
-        adminsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onDataChange(DataSnapshot ds) {
-                final HashMap<String, Object> adminsMap = (HashMap<String, Object>) ds.getValue();
-
-                if (adminsMap.size() == 1 && adminsMap.containsKey(userUid)) {
-                        activity.displayOnlyAdminAlert();
-                } else {
-                    userGroupsRef.setValue(userGroups).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            DatabaseReference groupUsersRef;
-                            if (adminsMap.containsKey(userUid)) {
-                                groupUsersRef = groupRef.child("admins").child(userUid);
-                            } else {
-                                groupUsersRef = groupRef.child("users").child(userUid);
-                            }
-                            groupUsersRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    activity.finish();
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onComplete(@NonNull Task<Void> task) {
+                groupUsersRef.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        activity.finish();
+                    }
+                });
             }
         });
     }

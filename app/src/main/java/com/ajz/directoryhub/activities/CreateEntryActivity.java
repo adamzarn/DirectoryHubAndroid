@@ -45,10 +45,12 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_entry);
 
-        if (getIntent().getExtras().getParcelable("entryToEdit") != null) {
-            getSupportActionBar().setTitle("Edit Entry");
-        } else {
-            getSupportActionBar().setTitle("Add Entry");
+        if (getSupportActionBar() != null) {
+            if (getIntent().getExtras().getParcelable("entryToEdit") != null) {
+                getSupportActionBar().setTitle(get(R.string.edit_entry_title));
+            } else {
+                getSupportActionBar().setTitle(get(R.string.add_entry_title));
+            }
         }
 
         createEntryFragment = new CreateEntryFragment();
@@ -93,7 +95,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!TextUtils.equals(typeSpinner.getItemAtPosition(i).toString(),"Child")) {
+                if (!TextUtils.equals(typeSpinner.getItemAtPosition(i).toString(), get(R.string.child))) {
                     birthOrderSpinner.setEnabled(false);
                     birthOrderSpinner.setSelection(0);
                 } else {
@@ -107,7 +109,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
             }
         });
 
-        final ArrayList<String> typeArray = new ArrayList<String>(Arrays.asList("Type", "Husband", "Wife", "Single", "Child"));
+        final ArrayList<String> typeArray = new ArrayList<String>(Arrays.asList(get(R.string.type), get(R.string.husband), get(R.string.wife), get(R.string.single), get(R.string.child)));
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, typeArray) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
@@ -134,7 +136,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         };
         typeSpinner.setAdapter(typeAdapter);
 
-        final ArrayList<String> birthOrderArray = new ArrayList<String>(Arrays.asList("Birth Order", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"));
+        final ArrayList<String> birthOrderArray = new ArrayList<String>(Arrays.asList(get(R.string.birth_order), "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"));
         ArrayAdapter<String> birthOrderAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, birthOrderArray) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
@@ -212,13 +214,13 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
             birthOrderSpinner.setSelection(birthOrderAdapter.getPosition(String.valueOf(selectedPerson.getBirthOrder())));
             phoneEditText.setText(selectedPerson.getPhone());
             emailEditText.setText(selectedPerson.getEmail());
-            if (!TextUtils.equals(selectedPerson.getType(),"Child")) {
+            if (!TextUtils.equals(selectedPerson.getType(), get(R.string.child))) {
                 birthOrderSpinner.setEnabled(false);
             }
         }
 
         dialogBuilder.setTitle(title);
-        dialogBuilder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton(get(R.string.submit), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String uid;
                 if (selectedPerson != null) {
@@ -232,14 +234,14 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                 }
 
                 String type;
-                if (TextUtils.equals(typeSpinner.getSelectedItem().toString(),"Type")) {
+                if (TextUtils.equals(typeSpinner.getSelectedItem().toString(), get(R.string.type))) {
                     type = "";
                 } else {
                     type = typeSpinner.getSelectedItem().toString();
                 }
 
                 int birthOrder;
-                if (TextUtils.equals(birthOrderSpinner.getSelectedItem().toString(),"Birth Order")) {
+                if (TextUtils.equals(birthOrderSpinner.getSelectedItem().toString(), get(R.string.birth_order))) {
                     birthOrder = 0;
                 } else {
                     birthOrder = Integer.parseInt(birthOrderSpinner.getSelectedItem().toString());
@@ -255,7 +257,9 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                 createEntryFragment.updatePeople(newPerson);
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(
+                get(R.string.cancel),
+                new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
@@ -278,7 +282,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "OK",
+                (get(R.string.ok)),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -295,12 +299,12 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
     @Override
     public void deletePersonClicked(final Person person) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateEntryActivity.this);
-        builder1.setTitle("Delete Person");
-        builder1.setMessage("Are you sure you want to delete " + person.getName() + "?");
+        builder1.setTitle(get(R.string.delete_person_title));
+        builder1.setMessage(get(R.string.delete_person_message_prefix) + person.getName() + "?");
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         createEntryFragment.deletePerson(person);
@@ -308,7 +312,7 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
                 });
 
         builder1.setNegativeButton(
-                "No",
+                get(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -318,4 +322,9 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
         AlertDialog alert11 = builder1.create();
         alert11.show();
     }
+
+    public String get(int i) {
+        return getResources().getString(i);
+    }
+
 }

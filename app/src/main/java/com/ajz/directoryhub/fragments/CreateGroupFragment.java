@@ -137,7 +137,7 @@ public class CreateGroupFragment extends Fragment {
         try {
             mCallback = (CreateGroupFragment.ClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListener");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -147,7 +147,7 @@ public class CreateGroupFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.create_group_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+        final ArrayList<String> stateArray = new ArrayList<String>(Arrays.asList("", "IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                 "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"));
         ArrayAdapter<String> stateAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, stateArray) {
             @Override
@@ -169,7 +169,7 @@ public class CreateGroupFragment extends Fragment {
 
         if (getArguments().getStringArrayList("groupUids") != null) {
             groupUids = getArguments().getStringArrayList("groupUids");
-            submitCreateGroupButton.setText("SUBMIT");
+            submitCreateGroupButton.setText(get(R.string.submit));
             manageAdministratorsButton.setVisibility(View.GONE);
             deleteGroupButton.setVisibility(View.GONE);
         }
@@ -177,7 +177,8 @@ public class CreateGroupFragment extends Fragment {
         if (getArguments().getParcelable("groupToEdit") != null) {
             groupToEdit = getArguments().getParcelable("groupToEdit");
 
-            groupUidTextView.setText("UNIQUE ID: " + groupToEdit.getUid());
+            String groupUidText = get(R.string.unique_id_label) + groupToEdit.getUid();
+            groupUidTextView.setText(groupUidText);
             groupNameEditText.setText(groupToEdit.getName());
             cityEditText.setText(groupToEdit.getCity());
             stateSpinner.setSelection(stateAdapter.getPosition(groupToEdit.getState()));
@@ -197,7 +198,7 @@ public class CreateGroupFragment extends Fragment {
             });
 
             manageAdministratorsButton.setVisibility(View.VISIBLE);
-            submitCreateGroupButton.setText("SUBMIT CHANGES");
+            submitCreateGroupButton.setText(get(R.string.submit_changes));
         }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(
@@ -236,6 +237,10 @@ public class CreateGroupFragment extends Fragment {
 
     public void setGroupToEdit(Group newGroupToEdit) {
         groupToEdit = newGroupToEdit;
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 
 }

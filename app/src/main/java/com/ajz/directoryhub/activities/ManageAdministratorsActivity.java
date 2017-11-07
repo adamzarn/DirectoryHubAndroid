@@ -28,7 +28,9 @@ public class ManageAdministratorsActivity extends AppCompatActivity implements M
 
         mAuth = FirebaseAuth.getInstance();
 
-        getSupportActionBar().setTitle("Manage Administrators");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.manage_administrators_title));
+        }
 
         manageAdministratorsFragment = new ManageAdministratorsFragment();
         manageAdministratorsFragment.setArguments(getIntent().getExtras());
@@ -68,4 +70,9 @@ public class ManageAdministratorsActivity extends AppCompatActivity implements M
     public void adminsEdited(Group group) {
         this.editedGroup = group;
     }
+
+    public String get(int i) {
+        return getResources().getString(i);
+    }
+
 }

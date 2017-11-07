@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/clear"
         android:textColor="#000"
-        android:text="Call"/>
+        android:text="@string/call"/>
 
     <Button
         android:id="@+id/text_button"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:background="@color/clear"
         android:textColor="#000"
-        android:text="Text"/>
+        android:text="@string/text"/>
 
     <Button
         android:id="@+id/email_button"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:background="@color/clear"
         android:textColor="#000"
-        android:text="Email"/>
+        android:text="@string/email"/>
 
     <Button
         android:id="@+id/add_to_contacts_button"
@@ -36,7 +36,6 @@
         android:layout_height="wrap_content"
         android:background="@color/clear"
         android:textColor="#000"
-        android:text="Add to Contacts" />
-
+        android:text="@string/add_to_contacts" />
 
 </LinearLayout>

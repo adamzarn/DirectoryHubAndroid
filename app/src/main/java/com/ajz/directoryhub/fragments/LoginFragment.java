@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment {
         try {
             mCallback = (ClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Must implement ClickListener");
+            throw new ClassCastException(get(R.string.must_implement_interface));
         }
     }
 
@@ -94,6 +94,10 @@ public class LoginFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    public String get(int i) {
+        return getContext().getResources().getString(i);
     }
 
 }
