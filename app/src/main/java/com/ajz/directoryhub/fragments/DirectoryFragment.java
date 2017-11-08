@@ -19,6 +19,8 @@ import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.adapters.DirectoryAdapter;
 import com.ajz.directoryhub.objects.Entry;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +50,9 @@ public class DirectoryFragment extends Fragment {
     public void addEntry() {
         mCallback.onAddEntrySelected();
     }
+
+    @BindView(R.id.directory_footer_banner_ad)
+    AdView mAdView;
 
     private DirectoryAdapter directoryAdapter;
 
@@ -134,6 +139,11 @@ public class DirectoryFragment extends Fragment {
             addEntryFab.setVisibility(View.GONE);
         }
         directoryRecyclerView.getLayoutManager().onRestoreInstanceState(rvState);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(adRequest);
+
         return rootView;
 
     }

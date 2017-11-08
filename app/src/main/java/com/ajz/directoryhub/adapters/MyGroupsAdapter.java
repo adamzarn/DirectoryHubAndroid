@@ -1,6 +1,5 @@
 package com.ajz.directoryhub.adapters;
 
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +15,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -85,17 +85,14 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
             }
         });
 
-        if (position + 1 == getItemCount()) {
-            setBottomMargin(holder.itemView, (int) (80 * Resources.getSystem().getDisplayMetrics().density));
-        } else {
-            setBottomMargin(holder.itemView, 0);
-        }
-
         holder.groupLogoImageView.setImageBitmap(null);
+        System.out.println(group.getName());
+        System.out.println(group.getUid());
+        System.out.println(" ");
         mStorage.getReference().child(group.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Picasso.with(holder.groupLogoImageView.getContext()).load(uri.toString()).into(holder.groupLogoImageView);
+                Picasso.with(holder.groupLogoImageView.getContext()).load(uri.toString()).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.groupLogoImageView);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -104,15 +101,6 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
             }
         });
 
-
-    }
-
-    public static void setBottomMargin(View view, int bottomMargin) {
-        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomMargin);
-            view.requestLayout();
-        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

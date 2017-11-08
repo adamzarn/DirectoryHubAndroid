@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">DirectoryHub</string>
+    <string name="admob_app_id">ca-app-pub-4590926477342036~6979528554</string>
+    <string name="my_groups_footer_ad_unit_id">ca-app-pub-4590926477342036/1152486805</string>
+    <string name="directory_footer_ad_unit_id">ca-app-pub-4590926477342036/3726324037</string>
+
+    <string name="banner_ad_test_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
     <string name="main_activity_title">Directory Hub</string>
 
     <string name="email_placeholder">Email</string>

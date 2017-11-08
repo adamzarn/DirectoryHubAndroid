@@ -35,7 +35,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/directory_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingBottom="50dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_entry_fab"
@@ -51,6 +52,17 @@
             android:layout_alignParentEnd="true"
             app:useCompatPadding="true"
             android:backgroundTint="@color/colorAccent"/>
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/directory_footer_banner_ad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="@string/banner_ad_test_unit_id">
+        </com.google.android.gms.ads.AdView>
 
     </RelativeLayout>
 

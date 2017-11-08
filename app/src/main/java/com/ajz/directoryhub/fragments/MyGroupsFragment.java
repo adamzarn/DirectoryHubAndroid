@@ -19,6 +19,8 @@ import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.activities.MyGroupsActivity;
 import com.ajz.directoryhub.adapters.MyGroupsAdapter;
 import com.ajz.directoryhub.objects.Group;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
@@ -47,6 +49,9 @@ public class MyGroupsFragment extends Fragment {
     public void addGroupFabClicked() {
         mAddGroupCallback.onAddGroupFabClicked();
     }
+
+    @BindView(R.id.my_groups_footer_banner_ad)
+    AdView mAdView;
 
     private FirebaseAuth mAuth;
     private String userUid;
@@ -133,6 +138,10 @@ public class MyGroupsFragment extends Fragment {
                 return true;
             }
         });
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(adRequest);
 
         return rootView;
 

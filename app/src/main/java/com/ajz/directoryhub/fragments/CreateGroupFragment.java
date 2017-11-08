@@ -202,6 +202,7 @@ public class CreateGroupFragment extends Fragment {
             passwordEditText.setText(groupToEdit.getPassword());
 
             if (currentImageData.length == 0 && !imageDownloaded) {
+                System.out.println("Here");
                 final long ONE_MEGABYTE = 1024 * 1024;
                 mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
@@ -213,7 +214,7 @@ public class CreateGroupFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        createGroupLogo.setImageBitmap(null);
+                        createGroupLogo.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.image_thumbnail, null));
                         currentImageData = new byte[0];
                     }
                 });
@@ -227,6 +228,9 @@ public class CreateGroupFragment extends Fragment {
 
             manageAdministratorsButton.setVisibility(View.VISIBLE);
             submitCreateGroupButton.setText(get(R.string.submit_changes));
+
+        } else {
+            createGroupLogo.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.image_thumbnail, null));
         }
 
         ArrayList<EditText> editTexts = new ArrayList<EditText>(

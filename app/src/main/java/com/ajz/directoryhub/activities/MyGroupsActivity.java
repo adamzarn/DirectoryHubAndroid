@@ -16,6 +16,7 @@ import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.MyGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
+
+        MobileAds.initialize(this, get(R.string.admob_app_id));
 
         mAuth = FirebaseAuth.getInstance();
 
