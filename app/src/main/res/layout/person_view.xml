@@ -22,6 +22,7 @@
             android:layout_height="@dimen/group_item_text_view_height"
             android:gravity="center_vertical"
             android:textSize="@dimen/font_sm"
+            android:maxLines="1"
             tools:text="Name, Type" />
 
         <TextView
@@ -30,6 +31,7 @@
             android:layout_height="@dimen/group_item_text_view_height"
             android:gravity="center_vertical"
             android:textSize="@dimen/font_sm"
+            android:maxLines="1"
             tools:text="Phone" />
 
         <TextView
@@ -38,6 +40,7 @@
             android:layout_height="@dimen/group_item_text_view_height"
             android:gravity="center_vertical"
             android:textSize="@dimen/font_sm"
+            android:maxLines="1"
             tools:text="Email" />
 
     </LinearLayout>

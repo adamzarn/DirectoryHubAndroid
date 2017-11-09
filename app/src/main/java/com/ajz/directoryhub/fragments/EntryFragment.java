@@ -149,6 +149,12 @@ public class EntryFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.entry_fragment, container, false);
@@ -180,24 +186,11 @@ public class EntryFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState != null) {
-            final int[] position = savedInstanceState.getIntArray("scroll_view_position");
-            entryScrollView.scrollTo(position[0], position[1] + offset);
-        } else {
-            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    entryScrollView.scrollTo(0, 0);
-                }
-            });
-        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putIntArray("scroll_view_position",
-                new int[]{entryScrollView.getScrollX(), entryScrollView.getScrollY()});
     }
 
     public void populateFragment(final Entry selectedEntry) {

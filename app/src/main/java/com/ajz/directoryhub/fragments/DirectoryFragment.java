@@ -1,8 +1,9 @@
 package com.ajz.directoryhub.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,13 @@ import butterknife.OnClick;
 
 public class DirectoryFragment extends Fragment {
 
-    private Parcelable rvState;
+    private DirectoryAdapter directoryAdapter;
+    int currentVisiblePosition = 0;
+    private Boolean dataLoaded = false;
+
+    String groupUid;
+    String groupName;
+    Boolean isAdmin;
 
     @BindView(R.id.directory_recycler_view)
     RecyclerView directoryRecyclerView;
@@ -48,13 +55,12 @@ public class DirectoryFragment extends Fragment {
 
     @OnClick(R.id.add_entry_fab)
     public void addEntry() {
+        dataLoaded = false;
         mCallback.onAddEntrySelected();
     }
 
     @BindView(R.id.directory_footer_banner_ad)
     AdView mAdView;
-
-    private DirectoryAdapter directoryAdapter;
 
     public DirectoryFragment() {
     }
@@ -65,6 +71,7 @@ public class DirectoryFragment extends Fragment {
         void onEntrySelected(Entry selectedEntry);
         void onDeleteEntryClicked(Entry entryToDelete);
         void onAddEntrySelected();
+        void updateWidget();
     }
 
     @Override
@@ -80,9 +87,7 @@ public class DirectoryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            rvState = savedInstanceState.getParcelable("rvState");
-        }
+        setRetainInstance(true);
     }
 
     @Override
@@ -94,22 +99,35 @@ public class DirectoryFragment extends Fragment {
         LinearLayoutManager llManager = new LinearLayoutManager(getActivity());
         directoryRecyclerView.setLayoutManager(llManager);
 
-        directoryAdapter = new DirectoryAdapter();
-        directoryRecyclerView.setAdapter(directoryAdapter);
-        directoryAdapter.setSearching(false);
-        directoryAdapter.setIsAdmin(getArguments().getBoolean("isAdmin"));
+        if (directoryAdapter == null) {
 
-        directoryAdapter.setOnEntryClickListener(new DirectoryAdapter.OnEntryClickListener() {
-            @Override
-            public void onEntryClick(Entry selectedEntry) {
-                mCallback.onEntrySelected(selectedEntry);
-            }
+            directoryAdapter = new DirectoryAdapter();
+            directoryRecyclerView.setAdapter(directoryAdapter);
+            directoryAdapter.setSearching(false);
 
-            @Override
-            public void deleteEntryClick(Entry entryToDelete) {
-                mCallback.onDeleteEntryClicked(entryToDelete);
-            }
-        });
+            groupUid = getArguments().getString("groupUid");
+            groupName = getArguments().getString("groupName");
+            isAdmin = getArguments().getBoolean("isAdmin");
+
+            directoryAdapter.setIsAdmin(isAdmin);
+
+            directoryAdapter.setOnEntryClickListener(new DirectoryAdapter.OnEntryClickListener() {
+                @Override
+                public void onEntryClick(Entry selectedEntry) {
+                    dataLoaded = false;
+                    mCallback.onEntrySelected(selectedEntry);
+                }
+
+                @Override
+                public void deleteEntryClick(Entry entryToDelete) {
+                    dataLoaded = false;
+                    mCallback.onDeleteEntryClicked(entryToDelete);
+                }
+            });
+
+        } else {
+            directoryRecyclerView.setAdapter(directoryAdapter);
+        }
 
         directorySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -135,10 +153,9 @@ public class DirectoryFragment extends Fragment {
             }
         });
 
-        if (!getArguments().getBoolean("isAdmin")) {
+        if (!isAdmin) {
             addEntryFab.setVisibility(View.GONE);
         }
-        directoryRecyclerView.getLayoutManager().onRestoreInstanceState(rvState);
 
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
@@ -151,13 +168,34 @@ public class DirectoryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        directoryRecyclerView.setVisibility(View.INVISIBLE);
-        loadData();
+        if (!dataLoaded) {
+            directoryRecyclerView.setVisibility(View.INVISIBLE);
+            loadData();
+        } else {
+            directoryProgressBar.setVisibility(View.INVISIBLE);
+            scrollToSavedPosition();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        currentVisiblePosition = ((LinearLayoutManager) directoryRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
     }
 
     public void loadData() {
+        dataLoaded = true;
         directoryProgressBar.setVisibility(View.VISIBLE);
-        new FirebaseClient().getDirectory(directoryAdapter, getArguments().getString("groupUid"), directoryRecyclerView, directoryProgressBar);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("groupUid", groupUid);
+        editor.putString("groupName", groupName);
+        editor.putBoolean("isAdmin", isAdmin);
+        editor.apply();
+        mCallback.updateWidget();
+
+        new FirebaseClient().getDirectory(directoryAdapter, groupUid, directoryRecyclerView, directoryProgressBar);
     }
 
     @Override
@@ -167,8 +205,11 @@ public class DirectoryFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("rvState", directoryRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    public void scrollToSavedPosition() {
+        directoryRecyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+        currentVisiblePosition = 0;
     }
 
     public String get(int i) {

@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.ClickListener {
 
+    private LoginFragment loginFragment;
+    private static final String TAG_LOGIN_FRAGMENT = "loginFragment";
     private FirebaseAuth mAuth;
 
     @Override
@@ -37,12 +39,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
             getSupportActionBar().setTitle(get(R.string.main_activity_title));
         }
 
-        LoginFragment loginFragment = new LoginFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
+        loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(TAG_LOGIN_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (loginFragment == null) {
+            loginFragment = new LoginFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.main_activity_container, loginFragment)
+                    .add(R.id.main_activity_container, loginFragment, TAG_LOGIN_FRAGMENT)
                     .commit();
         }
     }

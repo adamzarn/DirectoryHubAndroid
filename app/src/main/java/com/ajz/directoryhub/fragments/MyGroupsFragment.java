@@ -33,6 +33,12 @@ import butterknife.OnClick;
 
 public class MyGroupsFragment extends Fragment {
 
+    private MyGroupsAdapter myGroupsAdapter;
+    int currentVisiblePosition = 0;
+    private Boolean dataLoaded = false;
+    private FirebaseAuth mAuth;
+    private String userUid;
+
     @BindView(R.id.my_groups_recycler_view)
     RecyclerView myGroupsRecyclerView;
 
@@ -52,10 +58,6 @@ public class MyGroupsFragment extends Fragment {
 
     @BindView(R.id.my_groups_footer_banner_ad)
     AdView mAdView;
-
-    private FirebaseAuth mAuth;
-    private String userUid;
-    private MyGroupsAdapter myGroupsAdapter;
 
     public MyGroupsFragment() {
     }
@@ -85,6 +87,12 @@ public class MyGroupsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.my_groups_fragment, container, false);
@@ -95,25 +103,35 @@ public class MyGroupsFragment extends Fragment {
 
         myGroupsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        myGroupsAdapter = new MyGroupsAdapter();
-        myGroupsRecyclerView.setAdapter(myGroupsAdapter);
-        myGroupsAdapter.setSearching(false);
+        if (myGroupsAdapter == null) {
 
-        myGroupsAdapter.setOnGroupClickListener(new MyGroupsAdapter.OnGroupClickListener() {
-            @Override
-            public void onGroupClick(Group selectedGroup) {
-                mCallback.onGroupSelected(selectedGroup);
-            }
-            @Override
-            public void onEditGroupClick(Group groupToEdit) {
-                mCallback.onGroupToEditSelected(groupToEdit);
-            }
+            myGroupsAdapter = new MyGroupsAdapter();
+            myGroupsRecyclerView.setAdapter(myGroupsAdapter);
+            myGroupsAdapter.setSearching(false);
 
-            @Override
-            public void onDeleteGroupClick(Group groupToDelete) {
-                mCallback.onGroupToDeleteSelected(groupToDelete);
-            }
-        });
+            myGroupsAdapter.setOnGroupClickListener(new MyGroupsAdapter.OnGroupClickListener() {
+                @Override
+                public void onGroupClick(Group selectedGroup) {
+                    dataLoaded = false;
+                    mCallback.onGroupSelected(selectedGroup);
+                }
+
+                @Override
+                public void onEditGroupClick(Group groupToEdit) {
+                    dataLoaded = false;
+                    mCallback.onGroupToEditSelected(groupToEdit);
+                }
+
+                @Override
+                public void onDeleteGroupClick(Group groupToDelete) {
+                    dataLoaded = false;
+                    mCallback.onGroupToDeleteSelected(groupToDelete);
+                }
+            });
+
+        } else {
+            myGroupsRecyclerView.setAdapter(myGroupsAdapter);
+        }
 
         myGroupsSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -150,19 +168,36 @@ public class MyGroupsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        myGroupsRecyclerView.setVisibility(View.INVISIBLE);
-        reloadData();
+        if (!dataLoaded) {
+            myGroupsRecyclerView.setVisibility(View.INVISIBLE);
+            myGroupsAdapter.clearData();
+            loadData();
+        } else {
+            loadingGroupsProgressBar.setVisibility(View.INVISIBLE);
+            scrollToSavedPosition();
+        }
     }
 
-    public void reloadData() {
+    @Override
+    public void onPause() {
+        super.onPause();
+        currentVisiblePosition = ((LinearLayoutManager) myGroupsRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    }
+
+    public void loadData() {
+        dataLoaded = true;
         loadingGroupsProgressBar.setVisibility(View.VISIBLE);
-        myGroupsAdapter.clearData();
         new FirebaseClient().getUserGroups((MyGroupsActivity) getActivity(), myGroupsAdapter, userUid, myGroupsRecyclerView, loadingGroupsProgressBar);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void scrollToSavedPosition() {
+        myGroupsRecyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+        currentVisiblePosition = 0;
     }
 
     @Override

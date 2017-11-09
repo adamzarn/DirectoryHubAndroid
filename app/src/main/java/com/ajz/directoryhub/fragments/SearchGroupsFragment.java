@@ -34,6 +34,7 @@ public class SearchGroupsFragment extends Fragment {
     private String searchKey;
     private SearchGroupsAdapter searchGroupsAdapter;
     private ArrayList<String> groupUids;
+    int currentVisiblePosition = 0;
 
     @BindView(R.id.by_name)
     Button byName;
@@ -97,6 +98,12 @@ public class SearchGroupsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.search_groups_fragment, container, false);
@@ -107,15 +114,21 @@ public class SearchGroupsFragment extends Fragment {
 
         searchGroupsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        searchGroupsAdapter = new SearchGroupsAdapter();
-        searchGroupsRecyclerView.setAdapter(searchGroupsAdapter);
+        if (searchGroupsAdapter == null) {
 
-        searchGroupsAdapter.setOnGroupClickListener(new SearchGroupsAdapter.OnGroupClickListener() {
-            @Override
-            public void onGroupClick(Group selectedGroup) {
-                mCallback.onGroupSelected(selectedGroup);
-            }
-        });
+            searchGroupsAdapter = new SearchGroupsAdapter();
+            searchGroupsRecyclerView.setAdapter(searchGroupsAdapter);
+
+            searchGroupsAdapter.setOnGroupClickListener(new SearchGroupsAdapter.OnGroupClickListener() {
+                @Override
+                public void onGroupClick(Group selectedGroup) {
+                    mCallback.onGroupSelected(selectedGroup);
+                }
+            });
+
+        } else {
+            searchGroupsRecyclerView.setAdapter(searchGroupsAdapter);
+        }
 
         searchGroupsSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -166,6 +179,18 @@ public class SearchGroupsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         groupUids = getArguments().getStringArrayList("groupUids");
+        scrollToSavedPosition();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        currentVisiblePosition = ((LinearLayoutManager) searchGroupsRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    }
+
+    public void scrollToSavedPosition() {
+        searchGroupsRecyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+        currentVisiblePosition = 0;
     }
 
     public String get(int i) {

@@ -19,6 +19,7 @@ public class ManageAdministratorsActivity extends AppCompatActivity implements M
 
     private FirebaseAuth mAuth;
     private ManageAdministratorsFragment manageAdministratorsFragment;
+    private static final String TAG_MANAGE_ADMINISTRATORS_FRAGMENT = "manageAdministratorsFragment";
     private Group editedGroup;
 
     @Override
@@ -32,13 +33,14 @@ public class ManageAdministratorsActivity extends AppCompatActivity implements M
             getSupportActionBar().setTitle(get(R.string.manage_administrators_title));
         }
 
-        manageAdministratorsFragment = new ManageAdministratorsFragment();
-        manageAdministratorsFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        manageAdministratorsFragment = (ManageAdministratorsFragment) fragmentManager.findFragmentByTag(TAG_MANAGE_ADMINISTRATORS_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (manageAdministratorsFragment == null) {
+            manageAdministratorsFragment = new ManageAdministratorsFragment();
+            manageAdministratorsFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.manage_administrators_activity_container, manageAdministratorsFragment)
+                    .add(R.id.manage_administrators_activity_container, manageAdministratorsFragment, TAG_MANAGE_ADMINISTRATORS_FRAGMENT)
                     .commit();
         }
 

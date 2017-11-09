@@ -27,18 +27,22 @@ import com.ajz.directoryhub.objects.Person;
 
 public class EntryActivity extends AppCompatActivity implements EntryFragment.OnEditEntryClickListener {
 
+    private EntryFragment entryFragment;
+    private static final String TAG_ENTRY_FRAGMENT = "entryFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
 
-        EntryFragment entryFragment = new EntryFragment();
-        entryFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        entryFragment = (EntryFragment) fragmentManager.findFragmentByTag(TAG_ENTRY_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (entryFragment == null) {
+            entryFragment = new EntryFragment();
+            entryFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.entry_activity_container, entryFragment)
+                    .add(R.id.entry_activity_container, entryFragment, TAG_ENTRY_FRAGMENT)
                     .commit();
         }
 

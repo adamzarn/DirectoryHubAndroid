@@ -86,9 +86,6 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         });
 
         holder.groupLogoImageView.setImageBitmap(null);
-        System.out.println(group.getName());
-        System.out.println(group.getUid());
-        System.out.println(" ");
         mStorage.getReference().child(group.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {

@@ -164,6 +164,28 @@ public class FirebaseClient {
 
         });
 
+    }
+
+    public void getWidgetData(final String groupUid) {
+
+        mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+
+                ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
+
+                for (DataSnapshot entry : ds.getChildren()) {
+                    receivedEntries.add(makeEntry(entry));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+
+        });
 
     }
 

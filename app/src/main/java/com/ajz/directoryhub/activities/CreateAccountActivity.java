@@ -26,6 +26,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
  */
 public class CreateAccountActivity extends AppCompatActivity implements CreateAccountFragment.ClickListener {
 
+    private CreateAccountFragment createAccountFragment;
+    private static final String TAG_CREATE_ACCOUNT_FRAGMENT = "createAccountFragment";
     private FirebaseAuth mAuth;
 
     @Override
@@ -35,12 +37,17 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
 
         mAuth = FirebaseAuth.getInstance();
 
-        CreateAccountFragment createAccountFragment = new CreateAccountFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(get(R.string.create_account_title));
+        }
 
-        if (savedInstanceState == null) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        createAccountFragment = (CreateAccountFragment) fragmentManager.findFragmentByTag(TAG_CREATE_ACCOUNT_FRAGMENT);
+
+        if (createAccountFragment == null) {
+            createAccountFragment = new CreateAccountFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.create_account_activity_container, createAccountFragment)
+                    .add(R.id.create_account_activity_container, createAccountFragment, TAG_CREATE_ACCOUNT_FRAGMENT)
                     .commit();
         }
 

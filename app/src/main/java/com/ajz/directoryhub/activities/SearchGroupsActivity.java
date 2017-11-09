@@ -25,6 +25,9 @@ import java.util.ArrayList;
 
 public class SearchGroupsActivity extends AppCompatActivity implements SearchGroupsFragment.OnGroupClickListener {
 
+    private SearchGroupsFragment searchGroupsFragment;
+    private static final String TAG_SEARCH_GROUPS_FRAGMENT = "searchGroupsFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +37,14 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
             getSupportActionBar().setTitle(get(R.string.search_groups_title));
         }
 
-        SearchGroupsFragment searchGroupsFragment = new SearchGroupsFragment();
-        searchGroupsFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        searchGroupsFragment = (SearchGroupsFragment) fragmentManager.findFragmentByTag(TAG_SEARCH_GROUPS_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (searchGroupsFragment == null) {
+            searchGroupsFragment = new SearchGroupsFragment();
+            searchGroupsFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.search_groups_activity_container, searchGroupsFragment)
+                    .add(R.id.search_groups_activity_container, searchGroupsFragment, TAG_SEARCH_GROUPS_FRAGMENT)
                     .commit();
         }
 

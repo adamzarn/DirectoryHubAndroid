@@ -38,6 +38,7 @@ import java.util.UUID;
 public class CreateEntryActivity extends AppCompatActivity implements CreateEntryFragment.ClickListener {
 
     private CreateEntryFragment createEntryFragment;
+    private static final String TAG_CREATE_ENTRY_FRAGMENT = "createEntryFragment";
     private Person pendingPerson;
     private String currentPersonDialogTitle;
 
@@ -54,13 +55,14 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
             }
         }
 
-        createEntryFragment = new CreateEntryFragment();
-        createEntryFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        createEntryFragment = (CreateEntryFragment) fragmentManager.findFragmentByTag(TAG_CREATE_ENTRY_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (createEntryFragment == null) {
+            createEntryFragment = new CreateEntryFragment();
+            createEntryFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.create_entry_activity_container, createEntryFragment)
+                    .add(R.id.create_entry_activity_container, createEntryFragment, TAG_CREATE_ENTRY_FRAGMENT)
                     .commit();
         }
 

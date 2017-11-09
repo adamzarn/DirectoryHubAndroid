@@ -1,17 +1,23 @@
 package com.ajz.directoryhub.activities;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ajz.directoryhub.DirectoryWidgetProvider;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.DirectoryFragment;
 import com.ajz.directoryhub.objects.Entry;
+
+import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
 
 /**
  * Created by adamzarn on 10/21/17.
@@ -20,6 +26,8 @@ import com.ajz.directoryhub.objects.Entry;
 public class DirectoryActivity extends AppCompatActivity implements DirectoryFragment.OnEntryClickListener {
 
     private String groupUid;
+    private DirectoryFragment directoryFragment;
+    private static final String TAG_DIRECTORY_FRAGMENT = "directoryFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +41,17 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         if (getIntent().getExtras() != null) {
             groupUid = getIntent().getExtras().getString("groupUid");
         } else {
-            groupUid = savedInstanceState.getString("groupUid");
+            groupUid = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("groupUid","");
         }
 
-        DirectoryFragment directoryFragment = new DirectoryFragment();
-        directoryFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
+        directoryFragment = (DirectoryFragment) fragmentManager.findFragmentByTag(TAG_DIRECTORY_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (directoryFragment == null) {
+            directoryFragment = new DirectoryFragment();
+            directoryFragment.setArguments(getIntent().getExtras());
             fragmentManager.beginTransaction()
-                    .add(R.id.directory_activity_container, directoryFragment)
+                    .add(R.id.directory_activity_container, directoryFragment, TAG_DIRECTORY_FRAGMENT)
                     .commit();
         }
 
@@ -108,7 +117,16 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         outState.putString("groupUid", groupUid);
     }
 
+    public void updateWidget() {
+        Intent intent = new Intent(this, DirectoryWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getContext(), DirectoryWidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
+    }
+
     public String get(int i) {
         return getResources().getString(i);
     }
+
 }

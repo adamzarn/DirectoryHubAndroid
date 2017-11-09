@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">DirectoryHub</string>
+    <string name="appwidget_text">Widget</string>
     <string name="admob_app_id">ca-app-pub-4590926477342036~6979528554</string>
     <string name="my_groups_footer_ad_unit_id">ca-app-pub-4590926477342036/1152486805</string>
     <string name="directory_footer_ad_unit_id">ca-app-pub-4590926477342036/3726324037</string>
@@ -115,6 +116,8 @@
 
     <string name="delete_person_title">Delete Person</string>
     <string name="delete_person_message_prefix">Are you sure you want to delete\u0020</string>
+
+    <string name="create_account_title">Create Account</string>
 
     <string name="create_group_title">Create Group</string>
     <string name="edit_group_title">Edit Group</string>

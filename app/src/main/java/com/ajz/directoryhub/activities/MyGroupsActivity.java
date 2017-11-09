@@ -29,6 +29,8 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
 
     private FirebaseAuth mAuth;
     private ArrayList<String> groupUids;
+    private MyGroupsFragment myGroupsFragment;
+    private static final String TAG_MY_GROUPS_FRAGMENT = "myGroupsFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +45,13 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
             getSupportActionBar().setTitle(get(R.string.my_groups_title));
         }
 
-        MyGroupsFragment myGroupsFragment = new MyGroupsFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
+        myGroupsFragment = (MyGroupsFragment) fragmentManager.findFragmentByTag(TAG_MY_GROUPS_FRAGMENT);
 
-        if (savedInstanceState == null) {
+        if (myGroupsFragment == null) {
+            myGroupsFragment = new MyGroupsFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.my_groups_activity_container, myGroupsFragment)
+                    .add(R.id.my_groups_activity_container, myGroupsFragment, TAG_MY_GROUPS_FRAGMENT)
                     .commit();
         }
 
@@ -59,6 +62,7 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
         Class directory = DirectoryActivity.class;
         Intent directoryIntent = new Intent(getApplicationContext(), directory);
         directoryIntent.putExtra("groupUid", selectedGroup.getUid());
+        directoryIntent.putExtra("groupName", selectedGroup.getName());
         if (!selectedGroup.getAdminKeys().contains(mAuth.getCurrentUser().getUid())) {
             directoryIntent.putExtra("isAdmin", false);
         } else {
