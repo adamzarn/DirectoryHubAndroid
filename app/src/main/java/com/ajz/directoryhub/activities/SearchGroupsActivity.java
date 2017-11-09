@@ -19,6 +19,7 @@ import com.ajz.directoryhub.fragments.SearchGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 
@@ -70,7 +71,11 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
                     ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
-                    currentUserGroups.add(selectedGroup.getUid());
+                    if (currentUserGroups != null) {
+                        currentUserGroups.add(selectedGroup.getUid());
+                    } else {
+                        currentUserGroups = new ArrayList<String>(Arrays.asList(selectedGroup.getUid()));
+                    }
                     if (isConnected()) {
                         new FirebaseClient().joinGroup(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups, "users");
                     } else {

@@ -2,6 +2,7 @@ package com.ajz.directoryhub.adapters;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,7 +93,7 @@ public class SearchGroupsAdapter extends RecyclerView.Adapter<SearchGroupsAdapte
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                holder.groupLogoImageView.setImageBitmap(null);
+                holder.groupLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(holder.groupLogoImageView.getContext().getResources(), R.drawable.image_thumbnail, null));
             }
         });
 

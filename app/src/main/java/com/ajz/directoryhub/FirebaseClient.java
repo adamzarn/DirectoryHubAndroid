@@ -218,7 +218,11 @@ public class FirebaseClient {
                 ArrayList<Group> receivedGroups = new ArrayList<>();
                 for (DataSnapshot child: ds.getChildren()) {
                     Group receivedGroup = makeGroup(child);
-                    if (!groupUids.contains(receivedGroup.getUid())) {
+                    if (groupUids != null) {
+                        if (!groupUids.contains(receivedGroup.getUid())) {
+                            receivedGroups.add(receivedGroup);
+                        }
+                    } else {
                         receivedGroups.add(receivedGroup);
                     }
                 }
