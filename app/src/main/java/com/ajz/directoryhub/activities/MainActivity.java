@@ -22,6 +22,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 public class MainActivity extends AppCompatActivity implements LoginFragment.ClickListener {
 
     private LoginFragment loginFragment;
@@ -63,17 +65,22 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                     DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.missing_password_title), get(R.string.missing_password_message));
                     return;
                 } else {
-                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            pb.setVisibility(View.INVISIBLE);
-                            if (task.isSuccessful()) {
-                                startMyGroups();
-                            } else {
-                                DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.error_title), task.getException().getMessage());
+                    if (isConnected()) {
+                        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                pb.setVisibility(View.INVISIBLE);
+                                if (task.isSuccessful()) {
+                                    startMyGroups();
+                                } else {
+                                    DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.error_title), task.getException().getMessage());
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        pb.setVisibility(View.INVISIBLE);
+                        DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+                    }
                 }
                 break;
             case R.id.create_account_button:
@@ -92,15 +99,19 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Cli
                         get(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int id) {
-                                mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        dialog.cancel();
-                                        if (task.isSuccessful()) {
-                                            DialogUtils.showPositiveAlert(getApplicationContext(), get(R.string.password_reset_email_sent), get(R.string.password_reset_email_sent_message));
+                                if (isConnected()) {
+                                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            dialog.cancel();
+                                            if (task.isSuccessful()) {
+                                                DialogUtils.showPositiveAlert(getApplicationContext(), get(R.string.password_reset_email_sent), get(R.string.password_reset_email_sent_message));
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                } else {
+                                    DialogUtils.showPositiveAlert(MainActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+                                }
                             }
                         });
 

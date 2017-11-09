@@ -37,6 +37,7 @@
                     android:gravity="center_vertical"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
+                    android:maxLines="1"
                     tools:text="Group Name" />
 
                 <TextView
@@ -46,6 +47,7 @@
                     android:gravity="center_vertical"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="italic"
+                    android:maxLines="1"
                     tools:text="City, State" />
 
                 <TextView
@@ -54,6 +56,7 @@
                     android:layout_height="@dimen/group_item_text_view_height"
                     android:gravity="center_vertical"
                     android:textSize="@dimen/font_sm"
+                    android:maxLines="1"
                     tools:text="Created By:" />
 
             </LinearLayout>

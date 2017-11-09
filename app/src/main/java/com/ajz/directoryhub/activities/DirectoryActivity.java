@@ -11,12 +11,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.DirectoryWidgetProvider;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.DirectoryFragment;
 import com.ajz.directoryhub.objects.Entry;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
 
 /**
@@ -78,7 +80,11 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
                 get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        new FirebaseClient().deleteEntry(DirectoryActivity.this, groupUid, entryToDelete.getUid());
+                        if (isConnected()) {
+                            new FirebaseClient().deleteEntry(DirectoryActivity.this, groupUid, entryToDelete.getUid());
+                        } else {
+                            noInternet();
+                        }
                     }
                 });
 
@@ -123,6 +129,10 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
         int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getContext(), DirectoryWidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         sendBroadcast(intent);
+    }
+
+    public void noInternet() {
+        DialogUtils.showPositiveAlert(DirectoryActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
     }
 
     public String get(int i) {

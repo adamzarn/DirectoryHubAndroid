@@ -27,6 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/21/17.
  */
@@ -72,6 +74,7 @@ public class DirectoryFragment extends Fragment {
         void onDeleteEntryClicked(Entry entryToDelete);
         void onAddEntrySelected();
         void updateWidget();
+        void noInternet();
     }
 
     @Override
@@ -184,18 +187,26 @@ public class DirectoryFragment extends Fragment {
     }
 
     public void loadData() {
-        dataLoaded = true;
-        directoryProgressBar.setVisibility(View.VISIBLE);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("groupUid", groupUid);
-        editor.putString("groupName", groupName);
-        editor.putBoolean("isAdmin", isAdmin);
-        editor.apply();
-        mCallback.updateWidget();
+        if (isConnected()) {
 
-        new FirebaseClient().getDirectory(directoryAdapter, groupUid, directoryRecyclerView, directoryProgressBar);
+            dataLoaded = true;
+            directoryProgressBar.setVisibility(View.VISIBLE);
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("groupUid", groupUid);
+            editor.putString("groupName", groupName);
+            editor.putBoolean("isAdmin", isAdmin);
+            editor.apply();
+            mCallback.updateWidget();
+
+            new FirebaseClient().getDirectory(directoryAdapter, groupUid, directoryRecyclerView, directoryProgressBar);
+
+        } else {
+            mCallback.noInternet();
+        }
+
     }
 
     @Override

@@ -202,7 +202,6 @@ public class CreateGroupFragment extends Fragment {
             passwordEditText.setText(groupToEdit.getPassword());
 
             if (currentImageData.length == 0 && !imageDownloaded) {
-                System.out.println("Here");
                 final long ONE_MEGABYTE = 1024 * 1024;
                 mStorage.getReference().child(groupToEdit.getUid() + ".jpg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override

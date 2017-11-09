@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/21/17.
  */
@@ -103,7 +105,11 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
                         public void onClick(DialogInterface dialog, int id) {
                             String groupUid = groupToDelete.getUid();
                             groupUids.remove(groupUid);
-                            new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, userType, groupUids);
+                            if (isConnected()) {
+                                new FirebaseClient().deleteFromMyGroups(MyGroupsActivity.this, groupUid, userType, groupUids);
+                            } else {
+                                DialogUtils.showPositiveAlert(MyGroupsActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+                            }
                         }
                     });
 
@@ -199,6 +205,11 @@ public class MyGroupsActivity extends AppCompatActivity implements MyGroupsFragm
         });
 
         alert.show();
+    }
+
+    @Override
+    public void noInternet() {
+        DialogUtils.showPositiveAlert(MyGroupsActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
     }
 
     public void setGroupUids(ArrayList<String> receivedGroupUids) {

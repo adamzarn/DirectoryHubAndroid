@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.R.attr.offset;
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 
 /**
  * Created by adamzarn on 10/24/17.
@@ -136,6 +137,7 @@ public class EntryFragment extends Fragment {
     public interface OnEditEntryClickListener {
         void onEditEntry(Entry entryToEdit);
         void presentContactOptions(Person person, String lastName);
+        void noInternet();
     }
 
     @Override
@@ -175,12 +177,16 @@ public class EntryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         entryScrollView.setVisibility(View.INVISIBLE);
-        reloadData();
+        loadData();
     }
 
-    public void reloadData() {
+    public void loadData() {
         entryProgressBar.setVisibility(View.VISIBLE);
-        new FirebaseClient().getEntry(this, args.getString("groupUid"), args.getString("entryUid"), entryScrollView, entryProgressBar);
+        if (isConnected()) {
+            new FirebaseClient().getEntry(this, args.getString("groupUid"), args.getString("entryUid"), entryScrollView, entryProgressBar);
+        } else {
+            mCallback.noInternet();
+        }
     }
 
     @Override

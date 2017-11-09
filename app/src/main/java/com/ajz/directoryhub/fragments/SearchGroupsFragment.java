@@ -25,6 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/26/17.
  */
@@ -85,6 +87,7 @@ public class SearchGroupsFragment extends Fragment {
 
     public interface OnGroupClickListener {
         void onGroupSelected(Group selectedGroup);
+        void noInternet();
     }
 
     @Override
@@ -154,13 +157,16 @@ public class SearchGroupsFragment extends Fragment {
         if (StringUtils.isMissing(query)) {
             searchGroupsAdapter.clearData();
         } else {
-            searchingGroupsProgressBar.setVisibility(View.VISIBLE);
-            searchGroupsRecyclerView.setVisibility(View.INVISIBLE);
-            FirebaseClient fb = new FirebaseClient();
-            if (byUniqueID.isSelected()) {
-                fb.queryGroupsByUniqueID(groupUids, searchGroupsAdapter, searchGroupsRecyclerView, query, searchingGroupsProgressBar);
+            if (isConnected()) {
+                searchingGroupsProgressBar.setVisibility(View.VISIBLE);
+                searchGroupsRecyclerView.setVisibility(View.INVISIBLE);
+                if (byUniqueID.isSelected()) {
+                    new FirebaseClient().queryGroupsByUniqueID(groupUids, searchGroupsAdapter, searchGroupsRecyclerView, query, searchingGroupsProgressBar);
+                } else {
+                    new FirebaseClient().queryGroups(groupUids, searchGroupsAdapter, searchGroupsRecyclerView, query.toLowerCase(), searchKey, searchingGroupsProgressBar);
+                }
             } else {
-                fb.queryGroups(groupUids, searchGroupsAdapter, searchGroupsRecyclerView, query.toLowerCase(), searchKey, searchingGroupsProgressBar);
+                mCallback.noInternet();
             }
         }
     }

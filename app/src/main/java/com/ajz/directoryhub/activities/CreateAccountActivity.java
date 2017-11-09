@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/20/17.
  */
@@ -85,19 +87,26 @@ public class CreateAccountActivity extends AppCompatActivity implements CreateAc
 
         final String displayName = firstName.trim() + " " + lastName.trim();
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                pb.setVisibility(View.GONE);
-                if (task.isSuccessful()) {
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    setDisplayName(user, displayName);
-                    new FirebaseClient().addNewUser(displayName);
-                } else {
-                    DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.error_title), task.getException().getMessage());
+        if (isConnected()) {
+
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    pb.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        setDisplayName(user, displayName);
+                        new FirebaseClient().addNewUser(displayName);
+                    } else {
+                        DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.error_title), task.getException().getMessage());
+                    }
                 }
-            }
-        });
+            });
+
+        } else {
+            pb.setVisibility(View.GONE);
+            DialogUtils.showPositiveAlert(CreateAccountActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+        }
 
     }
 

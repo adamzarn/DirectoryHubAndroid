@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.CreateEntryFragment;
@@ -30,6 +31,8 @@ import com.ajz.directoryhub.objects.Person;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
+
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 
 /**
  * Created by adamzarn on 11/1/17.
@@ -274,7 +277,11 @@ public class CreateEntryActivity extends AppCompatActivity implements CreateEntr
 
     @Override
     public void submitButtonClicked(Entry entry) {
-        new FirebaseClient().addEntry(CreateEntryActivity.this, getIntent().getExtras().getString("groupUid"), entry);
+        if (isConnected()) {
+            new FirebaseClient().addEntry(CreateEntryActivity.this, getIntent().getExtras().getString("groupUid"), entry);
+        } else {
+            DialogUtils.showPositiveAlert(CreateEntryActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+        }
     }
 
     @Override

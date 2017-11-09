@@ -12,12 +12,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.FirebaseClient;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.SearchGroupsFragment;
 import com.ajz.directoryhub.objects.Group;
 
 import java.util.ArrayList;
+
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 
 /**
  * Created by adamzarn on 10/26/17.
@@ -68,7 +71,11 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
                 if (TextUtils.equals(groupPasswordEditText.getText().toString(),selectedGroup.getPassword())) {
                     ArrayList<String> currentUserGroups = getIntent().getStringArrayListExtra("groupUids");
                     currentUserGroups.add(selectedGroup.getUid());
-                    new FirebaseClient().joinGroup(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups, "users");
+                    if (isConnected()) {
+                        new FirebaseClient().joinGroup(SearchGroupsActivity.this, selectedGroup.getUid(), currentUserGroups, "users");
+                    } else {
+                        noInternet();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), get(R.string.incorrect_password), Toast.LENGTH_LONG).show();
                 }
@@ -99,4 +106,8 @@ public class SearchGroupsActivity extends AppCompatActivity implements SearchGro
         return getResources().getString(i);
     }
 
+    @Override
+    public void noInternet() {
+        DialogUtils.showPositiveAlert(SearchGroupsActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+    }
 }

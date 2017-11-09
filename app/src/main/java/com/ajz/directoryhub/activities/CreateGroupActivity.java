@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/27/17.
  */
@@ -103,18 +105,23 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
             return;
         }
 
-        if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
-            FirebaseUser user = mAuth.getCurrentUser();
-            HashMap<String, Object> admins = new HashMap<String, Object>();
-            admins.put(user.getUid(), user.getDisplayName());
+        if (isConnected()) {
+            if (getIntent().getExtras().getParcelable("groupToEdit") == null) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                HashMap<String, Object> admins = new HashMap<String, Object>();
+                admins.put(user.getUid(), user.getDisplayName());
 
-            Group newGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
-                    user.getDisplayName().toLowerCase(), user.getUid());
-            new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
+                Group newGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, admins, null, user.getDisplayName(),
+                        user.getDisplayName().toLowerCase(), user.getUid());
+                new FirebaseClient().createGroup(CreateGroupActivity.this, newGroup, groupLogo, groupUids);
+            } else {
+                Group editedGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, editedAdmins, editedUsers, groupToEdit.getCreatedBy(),
+                        groupToEdit.getLowercasedCreatedBy(), groupToEdit.getCreatedByUid());
+                new FirebaseClient().editGroup(CreateGroupActivity.this, editedGroup, groupLogo);
+            }
         } else {
-            Group editedGroup = new Group(groupUid, groupName, groupName.toLowerCase(), city, state, password, editedAdmins, editedUsers, groupToEdit.getCreatedBy(),
-                    groupToEdit.getLowercasedCreatedBy(), groupToEdit.getCreatedByUid());
-            new FirebaseClient().editGroup(CreateGroupActivity.this, editedGroup, groupLogo);
+            pb.setVisibility(View.INVISIBLE);
+            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
         }
 
     }
@@ -187,7 +194,11 @@ public class CreateGroupActivity extends AppCompatActivity implements CreateGrou
                 get(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        new FirebaseClient().deleteGroup(CreateGroupActivity.this, groupToDelete.getUid());
+                        if (isConnected()) {
+                            new FirebaseClient().deleteGroup(CreateGroupActivity.this, groupToDelete.getUid());
+                        } else {
+                            DialogUtils.showPositiveAlert(CreateGroupActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
+                        }
                     }
                 });
 

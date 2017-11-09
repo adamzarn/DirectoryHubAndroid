@@ -212,4 +212,7 @@
     <string name="create">Create</string>
     <string name="search">Search</string>
 
+    <string name="no_internet_connection_title">No Internet Connection</string>
+    <string name="no_internet_connection_message">You are not connected to the internet. Please establish a connection.</string>
+
 </resources>

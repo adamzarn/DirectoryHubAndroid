@@ -2,6 +2,7 @@ package com.ajz.directoryhub.adapters;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,12 +90,14 @@ public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHo
         mStorage.getReference().child(group.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                System.out.println("Success");
                 Picasso.with(holder.groupLogoImageView.getContext()).load(uri.toString()).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.groupLogoImageView);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                holder.groupLogoImageView.setImageBitmap(null);
+                System.out.println("Failure");
+                holder.groupLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(holder.groupLogoImageView.getContext().getResources(), R.drawable.image_thumbnail, null));
             }
         });
 

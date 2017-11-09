@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.ManageAdministratorsFragment;
 import com.ajz.directoryhub.objects.Group;
-import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by adamzarn on 10/30/17.
@@ -17,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ManageAdministratorsActivity extends AppCompatActivity implements ManageAdministratorsFragment.OnAdminsEditedListener {
 
-    private FirebaseAuth mAuth;
     private ManageAdministratorsFragment manageAdministratorsFragment;
     private static final String TAG_MANAGE_ADMINISTRATORS_FRAGMENT = "manageAdministratorsFragment";
     private Group editedGroup;
@@ -26,8 +24,6 @@ public class ManageAdministratorsActivity extends AppCompatActivity implements M
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_administrators);
-
-        mAuth = FirebaseAuth.getInstance();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(get(R.string.manage_administrators_title));

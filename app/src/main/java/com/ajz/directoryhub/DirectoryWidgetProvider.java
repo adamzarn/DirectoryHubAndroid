@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
 
 
@@ -47,50 +48,70 @@ public class DirectoryWidgetProvider extends AppWidgetProvider {
         final String groupName = preferences.getString("groupName", "");
         final Boolean isAdmin = preferences.getBoolean("isAdmin", false);
 
-        if (!StringUtils.isMissing(groupUid)) {
+        if (isConnected()) {
 
-            Intent intent = new Intent(context, DirectoryActivity.class);
-            intent.putExtra("groupUid", groupUid);
-            intent.putExtra("groupName", groupName);
-            intent.putExtra("isAdmin", isAdmin);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
+            if (!StringUtils.isMissing(groupUid)) {
 
-            mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                Intent intent = new Intent(context, DirectoryActivity.class);
+                intent.putExtra("groupUid", groupUid);
+                intent.putExtra("groupName", groupName);
+                intent.putExtra("isAdmin", isAdmin);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
 
-                @Override
-                public void onDataChange(DataSnapshot ds) {
+                mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
-                    for (DataSnapshot entry : ds.getChildren()) {
-                        if (entry != null) {
-                            receivedEntries.add(makeEntry(entry));
-                        }
-                    }
-                    int adultCount=0;
-                    int childCount=0;
-                    for (Entry entry : receivedEntries) {
-                        for (Person person : entry.getPeople()) {
-                            if (TextUtils.equals(person.getType(), get(R.string.child))) {
-                                childCount++;
-                            } else {
-                                adultCount++;
+                    @Override
+                    public void onDataChange(DataSnapshot ds) {
+
+                        ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
+                        for (DataSnapshot entry : ds.getChildren()) {
+                            if (entry != null) {
+                                receivedEntries.add(makeEntry(entry));
                             }
                         }
+                        int adultCount = 0;
+                        int childCount = 0;
+                        for (Entry entry : receivedEntries) {
+                            for (Person person : entry.getPeople()) {
+                                if (TextUtils.equals(person.getType(), get(R.string.child))) {
+                                    childCount++;
+                                } else {
+                                    adultCount++;
+                                }
+                            }
+                        }
+
+                        views.setTextViewText(R.id.widget_group_name, groupName);
+                        views.setTextViewText(R.id.widget_person_count, "Total people: " + (adultCount + childCount));
+                        views.setTextViewText(R.id.widget_adult_count, "Adults: " + adultCount);
+                        views.setTextViewText(R.id.widget_child_count, "Children: " + childCount);
+                        appWidgetManager.updateAppWidget(appWidgetId, views);
+
                     }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+            } else {
+
+                Intent intent = new Intent(context, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
+
+                if (StringUtils.isMissing(groupName)) {
+                    views.setTextViewText(R.id.widget_group_name, get(R.string.app_name));
+                } else {
                     views.setTextViewText(R.id.widget_group_name, groupName);
-                    views.setTextViewText(R.id.widget_person_count, "Total people: " + (adultCount + childCount));
-                    views.setTextViewText(R.id.widget_adult_count, "Adults: " + adultCount);
-                    views.setTextViewText(R.id.widget_child_count, "Children: " + childCount);
-                    appWidgetManager.updateAppWidget(appWidgetId, views);
-
                 }
+                views.setTextViewText(R.id.widget_person_count, "Total people: 0");
+                views.setTextViewText(R.id.widget_adult_count, "Adults: 0");
+                views.setTextViewText(R.id.widget_child_count, "Children: 0");
+                appWidgetManager.updateAppWidget(appWidgetId, views);
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+            }
 
         } else {
 
@@ -98,11 +119,7 @@ public class DirectoryWidgetProvider extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
             views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
 
-            if (StringUtils.isMissing(groupName)) {
-                views.setTextViewText(R.id.widget_group_name, get(R.string.app_name));
-            } else {
-                views.setTextViewText(R.id.widget_group_name, groupName);
-            }
+            views.setTextViewText(R.id.widget_group_name, get(R.string.no_internet_connection_title));
             views.setTextViewText(R.id.widget_person_count, "Total people: 0");
             views.setTextViewText(R.id.widget_adult_count, "Adults: 0");
             views.setTextViewText(R.id.widget_child_count, "Children: 0");

@@ -27,6 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+
 /**
  * Created by adamzarn on 10/21/17.
  */
@@ -53,6 +55,7 @@ public class MyGroupsFragment extends Fragment {
 
     @OnClick(R.id.add_group_fab)
     public void addGroupFabClicked() {
+        dataLoaded = false;
         mAddGroupCallback.onAddGroupFabClicked();
     }
 
@@ -69,6 +72,7 @@ public class MyGroupsFragment extends Fragment {
         void onGroupSelected(Group selectedGroup);
         void onGroupToEditSelected(Group groupToEdit);
         void onGroupToDeleteSelected(Group groupToDelete);
+        void noInternet();
     }
 
     public interface OnAddGroupFabClickListener {
@@ -187,7 +191,12 @@ public class MyGroupsFragment extends Fragment {
     public void loadData() {
         dataLoaded = true;
         loadingGroupsProgressBar.setVisibility(View.VISIBLE);
-        new FirebaseClient().getUserGroups((MyGroupsActivity) getActivity(), myGroupsAdapter, userUid, myGroupsRecyclerView, loadingGroupsProgressBar);
+        if (isConnected()) {
+            new FirebaseClient().getUserGroups((MyGroupsActivity) getActivity(), myGroupsAdapter, userUid, myGroupsRecyclerView, loadingGroupsProgressBar);
+        } else {
+            loadingGroupsProgressBar.setVisibility(View.INVISIBLE);
+            mCallback.noInternet();
+        }
     }
 
     @Override

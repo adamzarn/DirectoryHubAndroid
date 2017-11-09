@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.ajz.directoryhub.DialogUtils;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.StringUtils;
 import com.ajz.directoryhub.fragments.EntryFragment;
@@ -157,6 +158,10 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                 Toast.makeText(this, R.string.added_contact_message, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void noInternet() {
+        DialogUtils.showPositiveAlert(EntryActivity.this, get(R.string.no_internet_connection_title), get(R.string.no_internet_connection_message));
     }
 
     public String get(int i) {

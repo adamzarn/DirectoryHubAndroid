@@ -27,4 +27,8 @@ public class DirectoryHubApplication extends Application {
         return instance;
     }
 
+    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
+        ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
+
 }
