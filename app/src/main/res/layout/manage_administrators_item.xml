@@ -18,8 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_sm"
-            android:layout_marginLeft="@dimen/margin_lg"
-            android:layout_marginRight="@dimen/margin_lg"
+            android:layout_marginStart="@dimen/margin_lg"
+            android:layout_marginEnd="@dimen/margin_lg"
             android:layout_marginTop="@dimen/margin_sm"
             android:layout_weight="1"
             android:gravity="center_vertical"
@@ -32,8 +32,8 @@
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="@dimen/margin_sm"
-            android:layout_marginLeft="@dimen/margin_xl"
-            android:layout_marginRight="@dimen/margin_xl"
+            android:layout_marginStart="@dimen/margin_xl"
+            android:layout_marginEnd="@dimen/margin_xl"
             android:layout_marginTop="@dimen/margin_sm"
             android:background="@drawable/my_checkbox" />
 

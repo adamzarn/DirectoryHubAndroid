@@ -38,8 +38,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/lightGray"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
                     tools:text="Phone" />
@@ -57,8 +57,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "555-555-5555" />
 
                 </LinearLayout>
@@ -77,8 +77,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/lightGray"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
                     tools:text="Email" />
@@ -96,8 +96,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "abc@gmail.com" />
 
                 </LinearLayout>
@@ -116,8 +116,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/lightGray"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
                     tools:text="Address" />
@@ -135,8 +135,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "Line 2" />
 
                     <TextView
@@ -144,8 +144,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "Line 3" />
 
                     <TextView
@@ -153,8 +153,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "Street" />
 
                     <TextView
@@ -162,8 +162,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_sm"
-                        android:layout_marginLeft="@dimen/margin_lg"
-                        android:layout_marginRight="@dimen/margin_lg"
+                        android:layout_marginStart="@dimen/margin_lg"
+                        android:layout_marginEnd="@dimen/margin_lg"
                         tools:text= "City, State ZIP" />
 
                 </LinearLayout>
@@ -182,8 +182,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/lightGray"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
                     tools:text="Contact Info" />
@@ -203,8 +203,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/lightGray"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:textSize="@dimen/font_sm"
                     android:textStyle="bold"
                     tools:text="Children" />
@@ -228,6 +228,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         app:useCompatPadding="true"
+        android:contentDescription="@string/edit_entry"
         android:backgroundTint="@color/colorAccent"/>
 
 </RelativeLayout>

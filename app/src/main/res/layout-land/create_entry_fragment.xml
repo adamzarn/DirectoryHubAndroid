@@ -32,8 +32,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm" >
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm" >
 
                     <TextView
                         android:id="@+id/last_name_label"
@@ -54,8 +54,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm" >
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm" >
 
                     <TextView
                         android:id="@+id/entry_phone_label"
@@ -77,8 +77,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm" >
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm" >
 
                     <TextView
                         android:id="@+id/entry_email_label"
@@ -103,16 +103,16 @@
                     android:textSize="@dimen/font_md"
                     android:layout_marginBottom="@dimen/margin_sm"
                     android:textStyle="bold"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     tools:text="ADDRESS" />
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm" >
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm" >
 
                     <TextView
                         android:id="@+id/entry_street_label"
@@ -133,8 +133,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm">
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm">
 
                     <TextView
                         android:id="@+id/entry_line2_label"
@@ -155,8 +155,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm">
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm">
 
                     <TextView
                         android:id="@+id/entry_line3_label"
@@ -180,8 +180,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_sm"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm">
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -259,8 +259,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_sm"
-                    android:paddingRight="@dimen/margin_sm"
+                    android:paddingStart="@dimen/margin_sm"
+                    android:paddingEnd="@dimen/margin_sm"
                     android:paddingBottom="@dimen/margin_sm">
 
                     <TextView
@@ -269,7 +269,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/entry_people_label_text"
                         android:textSize="@dimen/font_md"
-                        android:layout_marginRight="@dimen/margin_sm"
+                        android:layout_marginEnd="@dimen/margin_sm"
                         android:layout_marginBottom="@dimen/margin_sm"
                         android:textStyle="bold"
                         tools:text="PEOPLE" />
@@ -301,8 +301,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/lightGray"
-                            android:paddingLeft="@dimen/margin_sm"
-                            android:paddingRight="@dimen/margin_sm"
+                            android:paddingStart="@dimen/margin_sm"
+                            android:paddingEnd="@dimen/margin_sm"
                             android:textSize="@dimen/font_sm"
                             android:textStyle="bold"
                             tools:text="Adults" />
@@ -322,8 +322,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/lightGray"
-                            android:paddingLeft="@dimen/margin_sm"
-                            android:paddingRight="@dimen/margin_sm"
+                            android:paddingStart="@dimen/margin_sm"
+                            android:paddingEnd="@dimen/margin_sm"
                             android:textSize="@dimen/font_sm"
                             android:textStyle="bold"
                             tools:text="Children" />
@@ -370,7 +370,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/margin_sm"
+            android:layout_marginStart="@dimen/margin_sm"
             android:backgroundTint="@color/colorAccent"
             android:visibility="invisible" />
 

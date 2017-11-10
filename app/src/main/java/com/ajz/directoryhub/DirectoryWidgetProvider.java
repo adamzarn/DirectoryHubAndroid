@@ -83,9 +83,9 @@ public class DirectoryWidgetProvider extends AppWidgetProvider {
                         }
 
                         views.setTextViewText(R.id.widget_group_name, groupName);
-                        views.setTextViewText(R.id.widget_person_count, "Total people: " + (adultCount + childCount));
-                        views.setTextViewText(R.id.widget_adult_count, "Adults: " + adultCount);
-                        views.setTextViewText(R.id.widget_child_count, "Children: " + childCount);
+                        views.setTextViewText(R.id.widget_person_count, get(R.string.total_people) + (adultCount + childCount));
+                        views.setTextViewText(R.id.widget_adult_count, get(R.string.adults) + adultCount);
+                        views.setTextViewText(R.id.widget_child_count, get(R.string.children) + childCount);
                         appWidgetManager.updateAppWidget(appWidgetId, views);
 
                     }
@@ -106,9 +106,9 @@ public class DirectoryWidgetProvider extends AppWidgetProvider {
                 } else {
                     views.setTextViewText(R.id.widget_group_name, groupName);
                 }
-                views.setTextViewText(R.id.widget_person_count, "Total people: 0");
-                views.setTextViewText(R.id.widget_adult_count, "Adults: 0");
-                views.setTextViewText(R.id.widget_child_count, "Children: 0");
+                views.setTextViewText(R.id.widget_person_count, get(R.string.total_people_0));
+                views.setTextViewText(R.id.widget_adult_count, get(R.string.adults_0));
+                views.setTextViewText(R.id.widget_child_count, get(R.string.children_0));
                 appWidgetManager.updateAppWidget(appWidgetId, views);
 
             }
@@ -120,9 +120,9 @@ public class DirectoryWidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
 
             views.setTextViewText(R.id.widget_group_name, get(R.string.no_internet_connection_title));
-            views.setTextViewText(R.id.widget_person_count, "Total people: 0");
-            views.setTextViewText(R.id.widget_adult_count, "Adults: 0");
-            views.setTextViewText(R.id.widget_child_count, "Children: 0");
+            views.setTextViewText(R.id.widget_person_count, get(R.string.total_people_0));
+            views.setTextViewText(R.id.widget_adult_count, get(R.string.adults_0));
+            views.setTextViewText(R.id.widget_child_count, get(R.string.children_0));
             appWidgetManager.updateAppWidget(appWidgetId, views);
 
         }

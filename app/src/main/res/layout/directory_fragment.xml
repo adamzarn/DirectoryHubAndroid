@@ -51,6 +51,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             app:useCompatPadding="true"
+            android:contentDescription="@string/add_entry"
             android:backgroundTint="@color/colorAccent"/>
 
         <com.google.android.gms.ads.AdView

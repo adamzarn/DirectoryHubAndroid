@@ -38,6 +38,7 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(get(R.string.directory_title));
+            getSupportActionBar().setSubtitle(getIntent().getExtras().getString("groupName"));
         }
 
         if (getIntent().getExtras() != null) {

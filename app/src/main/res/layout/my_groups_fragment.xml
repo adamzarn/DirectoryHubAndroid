@@ -51,6 +51,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             app:useCompatPadding="true"
+            android:contentDescription="@string/search_for_or_create_a_group"
             android:backgroundTint="@color/colorAccent"/>
 
         <com.google.android.gms.ads.AdView

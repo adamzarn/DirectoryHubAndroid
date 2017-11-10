@@ -152,7 +152,7 @@
 
     <string name="search_groups_title">Search Groups</string>
     <string name="password_required">Password Required</string>
-    <string name="enter_password_prefix">Enter the password to join the group\u0020</string>
+    <string name="enter_password_prefix">Enter the password to join the group \"</string>
     <string name="incorrect_password">Incorrect Password</string>
 
     <string name="created_by_prefix">Created by:\u0020</string>
@@ -214,5 +214,25 @@
 
     <string name="no_internet_connection_title">No Internet Connection</string>
     <string name="no_internet_connection_message">You are not connected to the internet. Please establish a connection.</string>
+
+    <string name="total_people">Total People:\u0020</string>
+    <string name="adults">Adults:\u0020</string>
+    <string name="children">Children:\u0020</string>
+
+    <string name="total_people_0">Total People: 0</string>
+    <string name="adults_0">Adults: 0</string>
+    <string name="children_0">Children: 0</string>
+
+    //Content Descriptors
+    <string name="delete_entry">Delete Entry</string>
+    <string name="add_entry">Add Entry</string>
+    <string name="delete_group">Delete Group</string>
+    <string name="edit_group">Edit Group</string>
+    <string name="edit_entry">Edit Entry</string>
+    <string name="search_for_or_create_a_group">Search for or Create a Group</string>
+
+    <string name="login_to_directory_hub">Login to Directory Hub</string>
+    <string name="entry_detail">Entry Detail</string>
+    <string name="add_or_edit_entry">Add or Edit Entry</string>
 
 </resources>

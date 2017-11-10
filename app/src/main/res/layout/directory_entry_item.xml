@@ -103,6 +103,7 @@
                     android:layout_height="30dp"
                     android:background="@android:drawable/ic_delete"
                     android:backgroundTint="@color/lightGray"
+                    android:contentDescription="@string/delete_entry"
                     android:gravity="center_vertical" />
 
             </LinearLayout>

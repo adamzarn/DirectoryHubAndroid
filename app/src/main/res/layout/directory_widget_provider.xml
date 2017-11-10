@@ -26,7 +26,7 @@
         android:textColor="#fff"
         android:maxLines="1"
         android:ellipsize="end"
-        android:paddingLeft="@dimen/margin_lg"
+        android:paddingStart="@dimen/margin_lg"
         tools:text="Person Count"/>
 
     <TextView
@@ -37,7 +37,7 @@
         android:textColor="#fff"
         android:maxLines="1"
         android:ellipsize="end"
-        android:paddingLeft="@dimen/margin_lg"
+        android:paddingStart="@dimen/margin_lg"
         tools:text="Adult Count" />
 
     <TextView
@@ -48,7 +48,7 @@
         android:textColor="#fff"
         android:maxLines="1"
         android:ellipsize="end"
-        android:paddingLeft="@dimen/margin_lg"
+        android:paddingStart="@dimen/margin_lg"
         tools:text="Child Count"/>
 
 </LinearLayout>
