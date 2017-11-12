@@ -12,11 +12,19 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.ajz.directoryhub.DialogUtils;
+import com.ajz.directoryhub.DirectoryHubApplication;
 import com.ajz.directoryhub.DirectoryWidgetProvider;
 import com.ajz.directoryhub.FirebaseClient;
+import com.ajz.directoryhub.GetDirectoryService;
 import com.ajz.directoryhub.R;
 import com.ajz.directoryhub.fragments.DirectoryFragment;
 import com.ajz.directoryhub.objects.Entry;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Trigger;
+
+import java.util.ArrayList;
 
 import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
 import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
@@ -25,7 +33,9 @@ import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
  * Created by adamzarn on 10/21/17.
  */
 
-public class DirectoryActivity extends AppCompatActivity implements DirectoryFragment.OnEntryClickListener {
+public class DirectoryActivity extends AppCompatActivity implements DirectoryFragment.OnEntryClickListener, FirebaseClient.DirectoryReceivedListener {
+
+    FirebaseJobDispatcher dispatcher;
 
     private String groupUid;
     private DirectoryFragment directoryFragment;
@@ -57,6 +67,19 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
                     .add(R.id.directory_activity_container, directoryFragment, TAG_DIRECTORY_FRAGMENT)
                     .commit();
         }
+
+        DirectoryHubApplication.getInstance().setDirectoryReceivedListener(this);
+
+        dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(DirectoryActivity.this));
+
+        Job myJob = dispatcher.newJobBuilder()
+                .setService(GetDirectoryService.class)
+                .setTag(groupUid)
+                .setRecurring(true)
+                .setTrigger(Trigger.executionWindow(10,20))
+                .build();
+
+        dispatcher.mustSchedule(myJob);
 
     }
 
@@ -138,6 +161,17 @@ public class DirectoryActivity extends AppCompatActivity implements DirectoryFra
 
     public String get(int i) {
         return getResources().getString(i);
+    }
+
+    @Override
+    public void directoryReceived(ArrayList<Entry> receivedEntries) {
+        directoryFragment.directoryReceived(receivedEntries);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dispatcher.cancelAll();
     }
 
 }

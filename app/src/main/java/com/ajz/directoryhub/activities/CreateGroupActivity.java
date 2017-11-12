@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
 
 /**
  * Created by adamzarn on 10/27/17.

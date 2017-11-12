@@ -11,7 +11,6 @@ import android.widget.ScrollView;
 import com.ajz.directoryhub.activities.CreateGroupActivity;
 import com.ajz.directoryhub.activities.DirectoryActivity;
 import com.ajz.directoryhub.activities.MyGroupsActivity;
-import com.ajz.directoryhub.adapters.DirectoryAdapter;
 import com.ajz.directoryhub.adapters.MyGroupsAdapter;
 import com.ajz.directoryhub.adapters.SearchGroupsAdapter;
 import com.ajz.directoryhub.fragments.EntryFragment;
@@ -43,6 +42,8 @@ import java.util.Map;
  */
 
 public class FirebaseClient {
+
+    public static DirectoryReceivedListener directoryReceivedListener;
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -138,15 +139,12 @@ public class FirebaseClient {
 
     }
 
-    public void getDirectory(final DirectoryAdapter adapter, String groupUid, final RecyclerView rv, final ProgressBar pb) {
+    public void getDirectory(String groupUid) {
 
         mDatabase.child("Directories").child(groupUid).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot ds) {
-
-                pb.setVisibility(View.GONE);
-                rv.setVisibility(View.VISIBLE);
 
                 ArrayList<Entry> receivedEntries = new ArrayList<Entry>();
 
@@ -154,7 +152,7 @@ public class FirebaseClient {
                     receivedEntries.add(makeEntry(entry));
                 }
 
-                adapter.setData(receivedEntries);
+                directoryReceivedListener.directoryReceived(receivedEntries);
 
             }
 
@@ -164,6 +162,10 @@ public class FirebaseClient {
 
         });
 
+    }
+
+    public interface DirectoryReceivedListener {
+        void directoryReceived(ArrayList<Entry> receivedEntries);
     }
 
     public void getWidgetData(final String groupUid) {

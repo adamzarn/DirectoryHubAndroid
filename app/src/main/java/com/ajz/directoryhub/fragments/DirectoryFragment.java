@@ -23,6 +23,8 @@ import com.ajz.directoryhub.objects.Entry;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -68,6 +70,12 @@ public class DirectoryFragment extends Fragment {
     }
 
     OnEntryClickListener mCallback;
+
+    public void directoryReceived(ArrayList<Entry> recievedEntries) {
+        directoryRecyclerView.setVisibility(View.VISIBLE);
+        directoryProgressBar.setVisibility(View.INVISIBLE);
+        directoryAdapter.setData(recievedEntries);
+    }
 
     public interface OnEntryClickListener {
         void onEntrySelected(Entry selectedEntry);
@@ -201,7 +209,7 @@ public class DirectoryFragment extends Fragment {
             editor.apply();
             mCallback.updateWidget();
 
-            new FirebaseClient().getDirectory(directoryAdapter, groupUid, directoryRecyclerView, directoryProgressBar);
+            new FirebaseClient().getDirectory(groupUid);
 
         } else {
             mCallback.noInternet();

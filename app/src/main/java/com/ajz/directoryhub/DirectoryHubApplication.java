@@ -31,4 +31,8 @@ public class DirectoryHubApplication extends Application {
         ConnectivityReceiver.connectivityReceiverListener = listener;
     }
 
+    public void setDirectoryReceivedListener(FirebaseClient.DirectoryReceivedListener listener) {
+        FirebaseClient.directoryReceivedListener = listener;
+    }
+
 }

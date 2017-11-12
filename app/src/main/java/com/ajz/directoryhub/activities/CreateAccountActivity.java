@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import static com.ajz.directoryhub.ConnectivityReceiver.isConnected;
+import static com.ajz.directoryhub.DirectoryHubApplication.getContext;
 
 /**
  * Created by adamzarn on 10/20/17.
